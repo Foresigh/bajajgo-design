@@ -10,6 +10,7 @@ const DATA_FILE = path.join(__dirname, 'data', 'waitlist.json');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ── Data helpers ──────────────────────────────────────────────
 function readWaitlist() {
   try {
     if (!fs.existsSync(path.dirname(DATA_FILE))) {
@@ -26,6 +27,15 @@ function saveWaitlist(list) {
   fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
   fs.writeFileSync(DATA_FILE, JSON.stringify(list, null, 2));
 }
+
+// ── Auth middleware ───────────────────────────────────────────
+function requireAuth(req, res, next) {
+  const pw = req.headers['x-admin-password'] || req.query.pw;
+  if (pw !== ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  next();
+}
+
+// ── Public endpoints ──────────────────────────────────────────
 
 // GET /api/waitlist/count
 app.get('/api/waitlist/count', (req, res) => {
@@ -47,7 +57,6 @@ app.post('/api/waitlist/join', (req, res) => {
   }
 
   const list = readWaitlist();
-
   const duplicate = list.find(d => d.phone === phoneClean);
   if (duplicate) {
     return res.status(409).json({
@@ -58,7 +67,7 @@ app.post('/api/waitlist/join', (req, res) => {
   }
 
   const entry = {
-    id: Date.now(),
+    id: Date.now().toString(),
     firstName,
     lastName,
     phone: phoneClean,
@@ -67,126 +76,146 @@ app.post('/api/waitlist/join', (req, res) => {
     experience: experience || '',
     ownership: ownership || '',
     smartphone: smartphone || '',
+    status: 'pending',
+    notes: '',
     joinedAt: new Date().toISOString(),
   };
 
   list.push(entry);
   saveWaitlist(list);
-
   res.json({ position: list.length, totalCount: list.length });
 });
 
-// GET /admin — simple password-protected signup list
-app.get('/admin', (req, res) => {
-  const { pw } = req.query;
-  if (pw !== ADMIN_PASSWORD) {
-    return res.send(`
-      <html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#F0F2F5">
-        <form style="background:#fff;padding:32px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.1);text-align:center">
-          <div style="font-size:32px;margin-bottom:8px">🛺</div>
-          <h2 style="margin-bottom:16px">BajajGo Admin</h2>
-          <input name="pw" type="password" placeholder="Password"
-            style="padding:10px 14px;border:2px solid #E0E6EF;border-radius:10px;font-size:15px;width:200px;display:block;margin:0 auto 12px"/>
-          <button type="submit"
-            style="padding:10px 24px;background:#F5A623;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">
-            Enter
-          </button>
-        </form>
-      </body></html>
-    `);
-  }
+// ── Admin API endpoints ───────────────────────────────────────
 
+// GET /api/admin/stats
+app.get('/api/admin/stats', requireAuth, (req, res) => {
   const list = readWaitlist();
-  const rows = list.map((d, i) => `
-    <tr style="border-bottom:1px solid #E0E6EF">
-      <td style="padding:10px 12px">${i + 1}</td>
-      <td style="padding:10px 12px;font-weight:600">${d.firstName} ${d.lastName}</td>
-      <td style="padding:10px 12px">${d.phone}</td>
-      <td style="padding:10px 12px">${d.city}</td>
-      <td style="padding:10px 12px">${d.plate || '—'}</td>
-      <td style="padding:10px 12px">${d.ownership || '—'}</td>
-      <td style="padding:10px 12px">${d.smartphone || '—'}</td>
-      <td style="padding:10px 12px;color:#8E9DB4;font-size:12px">${new Date(d.joinedAt).toLocaleString()}</td>
-    </tr>
-  `).join('');
+  const now = new Date();
 
-  const cities = list.reduce((acc, d) => { acc[d.city] = (acc[d.city] || 0) + 1; return acc; }, {});
-  const cityRows = Object.entries(cities).sort((a, b) => b[1] - a[1])
-    .map(([city, count]) => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #E0E6EF"><span>${city}</span><strong>${count}</strong></div>`)
-    .join('');
+  // Signups per day for last 30 days
+  const dailyCounts = {};
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    dailyCounts[d.toISOString().slice(0, 10)] = 0;
+  }
+  list.forEach(d => {
+    const day = d.joinedAt.slice(0, 10);
+    if (dailyCounts[day] !== undefined) dailyCounts[day]++;
+  });
 
-  res.send(`
-    <!DOCTYPE html>
-    <html><head><meta charset="UTF-8"/><title>BajajGo Admin</title></head>
-    <body style="font-family:sans-serif;background:#F0F2F5;margin:0;padding:24px">
-      <div style="max-width:1100px;margin:0 auto">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
-          <div style="font-size:28px">🛺</div>
-          <div>
-            <h1 style="margin:0;font-size:22px">BajajGo Driver Waitlist</h1>
-            <div style="color:#8E9DB4;font-size:13px">Admin Dashboard</div>
-          </div>
-          <div style="margin-left:auto;background:#F5A623;color:#fff;padding:10px 20px;border-radius:12px;font-size:22px;font-weight:900">
-            ${list.length} Drivers
-          </div>
-        </div>
+  // By city
+  const byCityMap = {};
+  list.forEach(d => { byCityMap[d.city] = (byCityMap[d.city] || 0) + 1; });
+  const byCity = Object.entries(byCityMap).sort((a, b) => b[1] - a[1]);
 
-        <div style="display:grid;grid-template-columns:1fr 280px;gap:20px">
-          <div>
-            <div style="background:#fff;border-radius:16px;overflow:auto;box-shadow:0 2px 10px rgba(0,0,0,0.06)">
-              <table style="width:100%;border-collapse:collapse;font-size:14px">
-                <thead>
-                  <tr style="background:#1A1A2E;color:#fff">
-                    <th style="padding:12px;text-align:left">#</th>
-                    <th style="padding:12px;text-align:left">Name</th>
-                    <th style="padding:12px;text-align:left">Phone</th>
-                    <th style="padding:12px;text-align:left">City</th>
-                    <th style="padding:12px;text-align:left">Plate</th>
-                    <th style="padding:12px;text-align:left">Ownership</th>
-                    <th style="padding:12px;text-align:left">Phone Type</th>
-                    <th style="padding:12px;text-align:left">Joined</th>
-                  </tr>
-                </thead>
-                <tbody>${rows || '<tr><td colspan="8" style="padding:24px;text-align:center;color:#8E9DB4">No signups yet</td></tr>'}</tbody>
-              </table>
-            </div>
-            <div style="margin-top:12px;text-align:right">
-              <a href="/api/waitlist/export?pw=${ADMIN_PASSWORD}"
-                style="background:#1A1A2E;color:#fff;padding:8px 18px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600">
-                ⬇ Export CSV
-              </a>
-            </div>
-          </div>
+  // By ownership
+  const byOwnership = {
+    owner: list.filter(d => d.ownership === 'owner').length,
+    renter: list.filter(d => d.ownership === 'renter').length,
+    unknown: list.filter(d => !d.ownership).length,
+  };
 
-          <div>
-            <div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.06);margin-bottom:16px">
-              <div style="font-weight:700;margin-bottom:12px">Signups by City</div>
-              ${cityRows || '<div style="color:#8E9DB4;font-size:13px">No data yet</div>'}
-            </div>
-            <div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.06)">
-              <div style="font-weight:700;margin-bottom:12px">Smartphone Type</div>
-              ${['yes','ios','no'].map(type => {
-                const count = list.filter(d => d.smartphone === type).length;
-                const label = type === 'yes' ? 'Android' : type === 'ios' ? 'iPhone' : 'Feature phone';
-                return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #E0E6EF"><span>${label}</span><strong>${count}</strong></div>`;
-              }).join('')}
-            </div>
-          </div>
-        </div>
-      </div>
-    </body></html>
-  `);
+  // By smartphone
+  const bySmartphone = {
+    android: list.filter(d => d.smartphone === 'yes').length,
+    ios: list.filter(d => d.smartphone === 'ios').length,
+    feature: list.filter(d => d.smartphone === 'no').length,
+  };
+
+  // By experience
+  const byExp = {};
+  list.forEach(d => {
+    const k = d.experience || 'Unknown';
+    byExp[k] = (byExp[k] || 0) + 1;
+  });
+
+  // By status
+  const byStatus = {
+    pending:  list.filter(d => d.status === 'pending').length,
+    approved: list.filter(d => d.status === 'approved').length,
+    rejected: list.filter(d => d.status === 'rejected').length,
+  };
+
+  // Today & this week
+  const todayStr = now.toISOString().slice(0, 10);
+  const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+  const todayCount = list.filter(d => d.joinedAt.slice(0, 10) === todayStr).length;
+  const weekCount  = list.filter(d => new Date(d.joinedAt) >= weekAgo).length;
+
+  res.json({
+    total: list.length,
+    todayCount,
+    weekCount,
+    byCity,
+    byOwnership,
+    bySmartphone,
+    byExperience: byExp,
+    byStatus,
+    dailyCounts,
+  });
 });
 
-// GET /api/waitlist/export — CSV download
-app.get('/api/waitlist/export', (req, res) => {
-  if (req.query.pw !== ADMIN_PASSWORD) return res.status(403).send('Forbidden');
+// GET /api/admin/drivers — list with search, filter, pagination
+app.get('/api/admin/drivers', requireAuth, (req, res) => {
+  let list = readWaitlist();
+  const { search, city, status, ownership, page = 1, limit = 20 } = req.query;
+
+  if (search) {
+    const q = search.toLowerCase();
+    list = list.filter(d =>
+      `${d.firstName} ${d.lastName}`.toLowerCase().includes(q) ||
+      d.phone.includes(q) ||
+      (d.plate && d.plate.toLowerCase().includes(q))
+    );
+  }
+  if (city)      list = list.filter(d => d.city === city);
+  if (status)    list = list.filter(d => d.status === status);
+  if (ownership) list = list.filter(d => d.ownership === ownership);
+
+  const total = list.length;
+  const pageNum = parseInt(page);
+  const limitNum = parseInt(limit);
+  const paginated = list
+    .slice()
+    .reverse()
+    .slice((pageNum - 1) * limitNum, pageNum * limitNum);
+
+  res.json({ drivers: paginated, total, page: pageNum, pages: Math.ceil(total / limitNum) });
+});
+
+// PATCH /api/admin/drivers/:id — update status or notes
+app.patch('/api/admin/drivers/:id', requireAuth, (req, res) => {
+  const list = readWaitlist();
+  const idx = list.findIndex(d => d.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Driver not found' });
+
+  const { status, notes } = req.body;
+  if (status) list[idx].status = status;
+  if (notes !== undefined) list[idx].notes = notes;
+  saveWaitlist(list);
+  res.json(list[idx]);
+});
+
+// DELETE /api/admin/drivers/:id
+app.delete('/api/admin/drivers/:id', requireAuth, (req, res) => {
+  const list = readWaitlist();
+  const idx = list.findIndex(d => d.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Driver not found' });
+  list.splice(idx, 1);
+  saveWaitlist(list);
+  res.json({ ok: true });
+});
+
+// GET /api/waitlist/export — CSV
+app.get('/api/waitlist/export', requireAuth, (req, res) => {
   const list = readWaitlist();
   const csv = [
-    ['#', 'First Name', 'Last Name', 'Phone', 'City', 'Plate', 'Experience', 'Ownership', 'Smartphone', 'Joined At'],
+    ['#', 'First Name', 'Last Name', 'Phone', 'City', 'Plate', 'Experience', 'Ownership', 'Smartphone', 'Status', 'Notes', 'Joined At'],
     ...list.map((d, i) => [
       i + 1, d.firstName, d.lastName, d.phone, d.city,
-      d.plate, d.experience, d.ownership, d.smartphone, d.joinedAt
+      d.plate, d.experience, d.ownership, d.smartphone, d.status, `"${d.notes || ''}"`, d.joinedAt
     ])
   ].map(r => r.join(',')).join('\n');
 
@@ -195,7 +224,9 @@ app.get('/api/waitlist/export', (req, res) => {
   res.send(csv);
 });
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-app.get('/drivers', (req, res) => res.sendFile(path.join(__dirname, 'public', 'drivers.html')));
+// ── Pages ─────────────────────────────────────────────────────
+app.get('/',          (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/drivers',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'drivers.html')));
+app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 
 app.listen(PORT, () => console.log(`BajajGo running on port ${PORT}`));

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BajajGo — Driver Waitlist Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #F5A623;
+      --primary-dark: #D4891A;
+      --secondary: #1A1A2E;
+      --success: #27AE60;
+      --danger: #E74C3C;
+      --warning: #F39C12;
+      --info: #2980B9;
+      --bg: #F0F2F5;
+      --card: #FFFFFF;
+      --border: #E0E6EF;
+      --muted: #8E9DB4;
+      --sidebar-w: 220px;
+      --text: #1A1A2E;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ── LOGIN OVERLAY ── */
+    #login-overlay {
+      position: fixed; inset: 0; background: var(--secondary);
+      display: flex; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .login-box {
+      background: #fff; border-radius: 24px; padding: 40px 36px;
+      width: 340px; text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    }
+    .login-logo { font-size: 36px; margin-bottom: 6px; }
+    .login-box h2 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .login-box p  { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+    .login-input {
+      width: 100%; padding: 12px 14px; border: 2px solid var(--border);
+      border-radius: 12px; font-size: 15px; margin-bottom: 12px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .login-input:focus { border-color: var(--primary); }
+    .login-btn {
+      width: 100%; padding: 13px; background: var(--primary); color: #fff;
+      border: none; border-radius: 12px; font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .login-btn:hover { opacity: 0.9; }
+    .login-error { color: var(--danger); font-size: 12px; margin-top: 8px; }
+
+    /* ── LAYOUT ── */
+    #app { display: none; height: 100vh; overflow: hidden; }
+    .layout { display: flex; height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w); background: var(--secondary);
+      display: flex; flex-direction: column;
+      flex-shrink: 0; overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-logo .logo { font-size: 18px; font-weight: 800; color: #fff; }
+    .sidebar-logo .logo span { color: var(--primary); }
+    .sidebar-logo .sub { color: rgba(255,255,255,0.4); font-size: 11px; margin-top: 2px; }
+    .nav-section { padding: 16px 12px 8px; }
+    .nav-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin-bottom: 6px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+      color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .nav-item.active { background: var(--primary); color: #fff; }
+    .nav-icon { font-size: 17px; width: 20px; text-align: center; }
+    .sidebar-bottom {
+      margin-top: auto; padding: 16px 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-user {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+    }
+    .sidebar-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; flex-shrink: 0;
+    }
+    .sidebar-user-name { color: #fff; font-size: 13px; font-weight: 600; }
+    .sidebar-user-role { color: rgba(255,255,255,0.4); font-size: 11px; }
+
+    /* ── MAIN ── */
+    .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 60px;
+      display: flex; align-items: center; gap: 16px;
+      flex-shrink: 0; position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-size: 18px; font-weight: 800; flex: 1; }
+    .topbar-subtitle { color: var(--muted); font-size: 13px; }
+    .topbar-actions { display: flex; gap: 8px; align-items: center; }
+    .btn {
+      padding: 8px 16px; border-radius: 10px; border: none;
+      font-size: 13px; font-weight: 600; cursor: pointer; display: flex;
+      align-items: center; gap: 6px; transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-secondary { background: var(--secondary); color: #fff; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger  { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 8px; }
+
+    /* ── CONTENT ── */
+    .content { padding: 24px 28px; flex: 1; }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── KPI CARDS ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: #fff; border-radius: 16px; padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .kpi-card.highlight { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-color: transparent; }
+    .kpi-card.highlight .kpi-val,
+    .kpi-card.highlight .kpi-lbl,
+    .kpi-card.highlight .kpi-change { color: #fff; }
+    .kpi-icon { font-size: 22px; }
+    .kpi-val { font-size: 32px; font-weight: 900; line-height: 1; }
+    .kpi-lbl { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+    .kpi-change { font-size: 12px; font-weight: 600; }
+    .kpi-change.up   { color: var(--success); }
+    .kpi-change.down { color: var(--danger); }
+    .kpi-change.neutral { color: var(--muted); }
+
+    /* ── CHART GRID ── */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px; margin-bottom: 24px;
+    }
+    .chart-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px; margin-bottom: 24px;
+    }
+    .chart-card {
+      background: #fff; border-radius: 16px; padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+    .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .chart-subtitle { font-size: 12px; color: var(--muted); font-weight: 400; }
+    .chart-wrap { position: relative; }
+
+    /* ── TABLE ── */
+    .table-card {
+      background: #fff; border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1px solid var(--border); overflow: hidden;
+    }
+    .table-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .table-title { font-size: 15px; font-weight: 700; flex: 1; }
+    .search-input {
+      padding: 8px 12px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 13px; outline: none;
+      width: 200px; transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    .filter-select {
+      padding: 8px 10px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 13px; outline: none;
+      background: #fff; cursor: pointer;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      padding: 10px 16px; text-align: left; font-size: 11px;
+      font-weight: 700; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.5px; background: #FAFBFD;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #FAFBFD; }
+    tbody td { padding: 12px 16px; vertical-align: middle; }
+    .driver-name { font-weight: 700; font-size: 14px; }
+    .driver-phone { color: var(--muted); font-size: 12px; }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+    }
+    .badge-pending  { background: #FFF3E0; color: #E67E22; }
+    .badge-approved { background: #E8F8EF; color: var(--success); }
+    .badge-rejected { background: #FDECEC; color: var(--danger); }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      padding: 14px 20px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; color: var(--muted);
+    }
+    .page-btns { display: flex; gap: 4px; }
+    .page-btn {
+      width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid var(--border);
+      background: #fff; cursor: pointer; font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .page-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .page-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── CITY BAR CHART (inline) ── */
+    .city-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+    .city-bar-wrap { flex: 1; background: #F0F2F5; border-radius: 4px; height: 8px; overflow: hidden; }
+    .city-bar { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.6s ease; }
+    .city-count { font-weight: 700; color: var(--primary); width: 28px; text-align: right; }
+    .city-name { width: 110px; color: var(--text); font-weight: 500; }
+
+    /* ── DRIVER DETAIL MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 20px; padding: 32px;
+      width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+    }
+    .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
+    .modal-title { font-size: 20px; font-weight: 800; }
+    .modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--muted); padding: 0; }
+    .detail-row { display: flex; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .detail-key { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; width: 120px; flex-shrink: 0; padding-top: 1px; }
+    .detail-val { font-weight: 600; }
+    .notes-area {
+      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 14px; resize: vertical; min-height: 80px;
+      outline: none; font-family: inherit;
+    }
+    .notes-area:focus { border-color: var(--primary); }
+    .modal-actions { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--secondary); color: #fff;
+      padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 999;
+      transform: translateY(80px); opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: var(--success); }
+    #toast.danger  { background: var(--danger); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state h3 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .empty-state p { font-size: 13px; }
+
+    /* ── LOADING SPINNER ── */
+    .spinner {
+      width: 36px; height: 36px; border: 3px solid var(--border);
+      border-top-color: var(--primary); border-radius: 50%;
+      animation: spin 0.7s linear infinite; margin: 40px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ANALYTICS PAGE extras ── */
+    .stat-highlight {
+      background: linear-gradient(135deg, var(--secondary), #0F3460);
+      border-radius: 16px; padding: 24px; color: #fff; margin-bottom: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+    .stat-highlight h2 { font-size: 28px; font-weight: 900; }
+    .stat-highlight p { color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; }
+
+    .progress-bar { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; margin-top: 6px; }
+    .progress-fill { height: 100%; background: var(--primary); border-radius: 5px; transition: width 0.6s ease; }
+
+    .breakdown-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+    }
+    .breakdown-item:last-child { border-bottom: none; }
+    .breakdown-label { display: flex; align-items: center; gap: 8px; }
+    .color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .breakdown-pct { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ LOGIN OVERLAY ═══════════════════════════════════════════ -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">🛺</div>
+    <h2>BajajGo Admin</h2>
+    <p>Sign in to manage your driver waitlist</p>
+    <input id="login-pw" type="password" class="login-input" placeholder="Enter password" />
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ════════════════════════════════════════════════ -->
+<div id="app">
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo">Bajaj<span>Go</span></div>
+        <div class="sub">Waitlist Dashboard</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Main</div>
+        <div class="nav-item active" onclick="showPage('overview')">
+          <span class="nav-icon">📊</span> Overview
+        </div>
+        <div class="nav-item" onclick="showPage('drivers')">
+          <span class="nav-icon">🛺</span> Drivers
+        </div>
+        <div class="nav-item" onclick="showPage('analytics')">
+          <span class="nav-icon">📈</span> Analytics
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Links</div>
+        <div class="nav-item" onclick="window.open('/drivers','_blank')">
+          <span class="nav-icon">🔗</span> Waitlist Page
+        </div>
+        <div class="nav-item" onclick="window.open('/','_blank')">
+          <span class="nav-icon">🎨</span> Design Site
+        </div>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">A</div>
+          <div>
+            <div class="sidebar-user-name">Admin</div>
+            <div class="sidebar-user-role">BajajGo Team</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
+      <!-- ══ PAGE: OVERVIEW ══════════════════════════════════════ -->
+      <div class="page active" id="page-overview">
+        <div class="topbar">
+          <div>
+            <div class="topbar-title">Overview</div>
+            <div class="topbar-subtitle" id="overview-updated">Loading...</div>
+          </div>
+          <div class="topbar-actions">
+            <button class="btn btn-outline" onclick="refreshAll()">↻ Refresh</button>
+            <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export CSV</button>
+          </div>
+        </div>
+        <div class="content">
+          <!-- KPIs -->
+          <div class="kpi-grid" id="kpi-grid">
+            <div class="kpi-card" style="align-items:center;justify-content:center;min-height:110px"><div class="spinner"></div></div>
+          </div>
+
+          <!-- Charts row -->
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-title">Signups Over Time <span class="chart-subtitle">Last 30 days</span></div>
+              <div class="chart-wrap"><canvas id="signupsChart" height="120"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Top Cities</div>
+              <div id="city-bars"></div>
+            </div>
+          </div>
+
+          <!-- Bottom row -->
+          <div class="chart-grid-3">
+            <div class="chart-card">
+              <div class="chart-title">Ownership</div>
+              <div class="chart-wrap" style="max-width:180px;margin:0 auto"><canvas id="ownershipChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Smartphone Type</div>
+              <div class="chart-wrap" style="max-width:180px;margin:0 auto"><canvas id="smartphoneChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Driver Status</div>
+              <div id="status-breakdown"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: DRIVERS ══════════════════════════════════════ -->
+      <div class="page" id="page-drivers">
+        <div class="topbar">
+          <div>
+            <div class="topbar-title">Drivers</div>
+            <div class="topbar-subtitle" id="drivers-count-lbl">Loading...</div>
+          </div>
+          <div class="topbar-actions">
+            <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export CSV</button>
+          </div>
+        </div>
+        <div class="content">
+          <div class="table-card">
+            <div class="table-header">
+              <div class="table-title">Driver Signups</div>
+              <input class="search-input" id="driver-search" placeholder="🔍 Search name, phone, plate…" oninput="debouncedSearch()" />
+              <select class="filter-select" id="filter-city" onchange="loadDrivers(1)">
+                <option value="">All Cities</option>
+                <option>Addis Ababa</option><option>Bahir Dar</option><option>Gondar</option>
+                <option>Hawassa</option><option>Mekelle</option><option>Dire Dawa</option>
+                <option>Jimma</option><option>Adama (Nazret)</option><option>Other</option>
+              </select>
+              <select class="filter-select" id="filter-status" onchange="loadDrivers(1)">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <select class="filter-select" id="filter-ownership" onchange="loadDrivers(1)">
+                <option value="">All Ownership</option>
+                <option value="owner">Owner</option>
+                <option value="renter">Renter</option>
+              </select>
+            </div>
+            <div id="drivers-table-wrap">
+              <div class="spinner"></div>
+            </div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: ANALYTICS ════════════════════════════════════ -->
+      <div class="page" id="page-analytics">
+        <div class="topbar">
+          <div>
+            <div class="topbar-title">Analytics</div>
+            <div class="topbar-subtitle">Detailed breakdown of your waitlist</div>
+          </div>
+          <div class="topbar-actions">
+            <button class="btn btn-outline" onclick="refreshAll()">↻ Refresh</button>
+          </div>
+        </div>
+        <div class="content">
+          <div class="stat-highlight">
+            <div>
+              <h2 id="analytics-total">— drivers</h2>
+              <p>Total on waitlist · <span id="analytics-week">—</span> joined this week</p>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:4px">Goal: 500 drivers</div>
+              <div style="font-size:22px;font-weight:800;color:var(--primary)" id="analytics-pct">—%</div>
+              <div class="progress-bar" style="width:200px">
+                <div class="progress-fill" id="analytics-progress" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-title">Daily Signups — Last 30 Days</div>
+              <div class="chart-wrap"><canvas id="analyticsLineChart" height="100"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">City Distribution</div>
+              <div class="chart-wrap" style="max-width:220px;margin:0 auto"><canvas id="cityDoughnut"></canvas></div>
+            </div>
+          </div>
+
+          <div class="chart-grid-3">
+            <div class="chart-card">
+              <div class="chart-title" style="margin-bottom:12px">Bajaj Ownership</div>
+              <div id="ownership-breakdown"></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title" style="margin-bottom:12px">Smartphone Access</div>
+              <div id="smartphone-breakdown"></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title" style="margin-bottom:12px">Driving Experience</div>
+              <div id="experience-breakdown"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- DRIVER DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-name">Driver Detail</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+  let adminPw = '';
+  let statsCache = null;
+  let currentPage = 1;
+  let searchTimer = null;
+  let signupsChartInst = null;
+  let ownershipChartInst = null;
+  let smartphoneChartInst = null;
+  let analyticsLineChartInst = null;
+  let cityDoughnutInst = null;
+
+  // ── Login ─────────────────────────────────────────────────────
+  document.getElementById('login-pw').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  async function doLogin() {
+    const pw = document.getElementById('login-pw').value.trim();
+    const errEl = document.getElementById('login-error');
+    errEl.textContent = '';
+    try {
+      const res = await fetch('/api/admin/stats', { headers: { 'x-admin-password': pw } });
+      if (!res.ok) { errEl.textContent = 'Incorrect password.'; return; }
+      adminPw = pw;
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      refreshAll();
+    } catch {
+      errEl.textContent = 'Connection error. Try again.';
+    }
+  }
+
+  // ── Navigation ────────────────────────────────────────────────
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`page-${name}`).classList.add('active');
+    const items = document.querySelectorAll('.nav-item');
+    const labels = ['overview','drivers','analytics','',''];
+    items.forEach((item, i) => { if (labels[i] === name) item.classList.add('active'); });
+
+    if (name === 'drivers') loadDrivers(1);
+    if (name === 'analytics') renderAnalytics();
+  }
+
+  // ── Refresh all data ──────────────────────────────────────────
+  async function refreshAll() {
+    await fetchStats();
+    renderOverview();
+  }
+
+  async function fetchStats() {
+    const res = await fetch('/api/admin/stats', { headers: { 'x-admin-password': adminPw } });
+    statsCache = await res.json();
+    const now = new Date().toLocaleTimeString();
+    document.getElementById('overview-updated').textContent = `Last updated: ${now}`;
+  }
+
+  // ── Overview ─────────────────────────────────────────────────
+  function renderOverview() {
+    if (!statsCache) return;
+    const s = statsCache;
+
+    // KPI cards
+    document.getElementById('kpi-grid').innerHTML = `
+      <div class="kpi-card highlight">
+        <div class="kpi-icon">🛺</div>
+        <div class="kpi-val">${s.total}</div>
+        <div class="kpi-lbl">Total Drivers</div>
+        <div class="kpi-change neutral">on waitlist</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📅</div>
+        <div class="kpi-val">${s.todayCount}</div>
+        <div class="kpi-lbl">Joined Today</div>
+        <div class="kpi-change ${s.todayCount > 0 ? 'up' : 'neutral'}">${s.todayCount > 0 ? '↑ Active today' : 'No signups yet'}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📆</div>
+        <div class="kpi-val">${s.weekCount}</div>
+        <div class="kpi-lbl">This Week</div>
+        <div class="kpi-change up">↑ last 7 days</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-val">${s.byStatus.approved}</div>
+        <div class="kpi-lbl">Approved</div>
+        <div class="kpi-change neutral">${s.total ? Math.round(s.byStatus.approved/s.total*100) : 0}% of total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🏙</div>
+        <div class="kpi-val">${s.byCity.length}</div>
+        <div class="kpi-lbl">Cities</div>
+        <div class="kpi-change neutral">${s.byCity[0] ? s.byCity[0][0] : '—'} leads</div>
+      </div>
+    `;
+
+    // Line chart
+    const labels = Object.keys(s.dailyCounts);
+    const values = Object.values(s.dailyCounts);
+    if (signupsChartInst) signupsChartInst.destroy();
+    signupsChartInst = new Chart(document.getElementById('signupsChart'), {
+      type: 'line',
+      data: {
+        labels: labels.map(l => l.slice(5)),
+        datasets: [{
+          label: 'Signups',
+          data: values,
+          borderColor: '#F5A623',
+          backgroundColor: 'rgba(245,166,35,0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: '#F5A623',
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#F0F2F5' }, ticks: { stepSize: 1 } },
+          x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 11 } } }
+        }
+      }
+    });
+
+    // City bars
+    const maxCity = s.byCity[0] ? s.byCity[0][1] : 1;
+    document.getElementById('city-bars').innerHTML = s.byCity.slice(0, 7).map(([city, count]) => `
+      <div class="city-row">
+        <div class="city-name">${city}</div>
+        <div class="city-bar-wrap"><div class="city-bar" style="width:${Math.round(count/maxCity*100)}%"></div></div>
+        <div class="city-count">${count}</div>
+      </div>
+    `).join('') || '<div style="color:var(--muted);font-size:13px">No data yet</div>';
+
+    // Ownership doughnut
+    if (ownershipChartInst) ownershipChartInst.destroy();
+    ownershipChartInst = new Chart(document.getElementById('ownershipChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Owner', 'Renter', 'Unknown'],
+        datasets: [{ data: [s.byOwnership.owner, s.byOwnership.renter, s.byOwnership.unknown],
+          backgroundColor: ['#F5A623','#1A1A2E','#E0E6EF'], borderWidth: 0 }]
+      },
+      options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }, cutout: '65%' }
+    });
+
+    // Smartphone doughnut
+    if (smartphoneChartInst) smartphoneChartInst.destroy();
+    smartphoneChartInst = new Chart(document.getElementById('smartphoneChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Android', 'iPhone', 'Feature Phone'],
+        datasets: [{ data: [s.bySmartphone.android, s.bySmartphone.ios, s.bySmartphone.feature],
+          backgroundColor: ['#27AE60','#2980B9','#8E9DB4'], borderWidth: 0 }]
+      },
+      options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }, cutout: '65%' }
+    });
+
+    // Status breakdown
+    const total = s.total || 1;
+    document.getElementById('status-breakdown').innerHTML = [
+      { label: 'Pending', val: s.byStatus.pending, color: '#E67E22' },
+      { label: 'Approved', val: s.byStatus.approved, color: '#27AE60' },
+      { label: 'Rejected', val: s.byStatus.rejected, color: '#E74C3C' },
+    ].map(item => `
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px">
+          <span>${item.label}</span><span style="color:${item.color}">${item.val}</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(item.val/total*100)}%;background:${item.color}"></div></div>
+      </div>
+    `).join('');
+  }
+
+  // ── Drivers table ─────────────────────────────────────────────
+  async function loadDrivers(page = 1) {
+    currentPage = page;
+    const search    = document.getElementById('driver-search').value;
+    const city      = document.getElementById('filter-city').value;
+    const status    = document.getElementById('filter-status').value;
+    const ownership = document.getElementById('filter-ownership').value;
+
+    document.getElementById('drivers-table-wrap').innerHTML = '<div class="spinner"></div>';
+
+    const params = new URLSearchParams({ page, limit: 20 });
+    if (search)    params.set('search', search);
+    if (city)      params.set('city', city);
+    if (status)    params.set('status', status);
+    if (ownership) params.set('ownership', ownership);
+
+    const res = await fetch(`/api/admin/drivers?${params}`, { headers: { 'x-admin-password': adminPw } });
+    const data = await res.json();
+    renderDriversTable(data);
+  }
+
+  function renderDriversTable({ drivers, total, page, pages }) {
+    document.getElementById('drivers-count-lbl').textContent = `${total} driver${total !== 1 ? 's' : ''} found`;
+
+    if (!drivers.length) {
+      document.getElementById('drivers-table-wrap').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🛺</div>
+          <h3>No drivers found</h3>
+          <p>Try adjusting your search or filters.</p>
+        </div>`;
+      document.getElementById('pagination').innerHTML = '';
+      return;
+    }
+
+    document.getElementById('drivers-table-wrap').innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Driver</th><th>City</th><th>Plate</th>
+            <th>Ownership</th><th>Experience</th><th>Phone Type</th>
+            <th>Status</th><th>Joined</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${drivers.map((d, i) => `
+            <tr>
+              <td style="color:var(--muted);font-size:12px">${d.id}</td>
+              <td>
+                <div class="driver-name">${d.firstName} ${d.lastName}</div>
+                <div class="driver-phone">${d.phone}</div>
+              </td>
+              <td>${d.city || '—'}</td>
+              <td>${d.plate || '—'}</td>
+              <td>${d.ownership === 'owner' ? '✅ Owner' : d.ownership === 'renter' ? '🔑 Renter' : '—'}</td>
+              <td style="font-size:12px">${d.experience || '—'}</td>
+              <td>${d.smartphone === 'yes' ? '📱 Android' : d.smartphone === 'ios' ? '🍎 iPhone' : d.smartphone === 'no' ? '📟 Feature' : '—'}</td>
+              <td><span class="badge badge-${d.status || 'pending'}">${(d.status || 'pending').charAt(0).toUpperCase() + (d.status || 'pending').slice(1)}</span></td>
+              <td style="font-size:12px;color:var(--muted)">${new Date(d.joinedAt).toLocaleDateString()}</td>
+              <td>
+                <div style="display:flex;gap:4px">
+                  <button class="btn btn-outline btn-sm" onclick='openModal(${JSON.stringify(d)})'>View</button>
+                  ${d.status !== 'approved' ? `<button class="btn btn-success btn-sm" onclick="updateStatus('${d.id}','approved')">✓</button>` : ''}
+                  ${d.status !== 'rejected' ? `<button class="btn btn-danger btn-sm" onclick="updateStatus('${d.id}','rejected')">✕</button>` : ''}
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+
+    // Pagination
+    const pag = document.getElementById('pagination');
+    if (pages <= 1) { pag.innerHTML = `<span>${total} total drivers</span>`; return; }
+    let btns = '';
+    for (let p = 1; p <= pages; p++) {
+      if (p === 1 || p === pages || Math.abs(p - page) <= 2) {
+        btns += `<button class="page-btn ${p === page ? 'active' : ''}" onclick="loadDrivers(${p})">${p}</button>`;
+      } else if (Math.abs(p - page) === 3) {
+        btns += `<button class="page-btn" disabled>…</button>`;
+      }
+    }
+    pag.innerHTML = `
+      <span>Showing ${(page-1)*20+1}–${Math.min(page*20,total)} of ${total}</span>
+      <div class="page-btns">
+        <button class="page-btn" onclick="loadDrivers(${page-1})" ${page===1?'disabled':''}>‹</button>
+        ${btns}
+        <button class="page-btn" onclick="loadDrivers(${page+1})" ${page===pages?'disabled':''}>›</button>
+      </div>`;
+  }
+
+  function debouncedSearch() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadDrivers(1), 300);
+  }
+
+  // ── Driver modal ──────────────────────────────────────────────
+  function openModal(driver) {
+    document.getElementById('modal-name').textContent = `${driver.firstName} ${driver.lastName}`;
+    document.getElementById('modal-body').innerHTML = `
+      <div class="detail-row"><div class="detail-key">Phone</div><div class="detail-val">${driver.phone}</div></div>
+      <div class="detail-row"><div class="detail-key">City</div><div class="detail-val">${driver.city || '—'}</div></div>
+      <div class="detail-row"><div class="detail-key">Plate</div><div class="detail-val">${driver.plate || '—'}</div></div>
+      <div class="detail-row"><div class="detail-key">Ownership</div><div class="detail-val">${driver.ownership === 'owner' ? '✅ Owns vehicle' : driver.ownership === 'renter' ? '🔑 Rents/leases' : '—'}</div></div>
+      <div class="detail-row"><div class="detail-key">Experience</div><div class="detail-val">${driver.experience || '—'}</div></div>
+      <div class="detail-row"><div class="detail-key">Smartphone</div><div class="detail-val">${driver.smartphone === 'yes' ? '📱 Android' : driver.smartphone === 'ios' ? '🍎 iPhone' : driver.smartphone === 'no' ? '📟 Feature phone' : '—'}</div></div>
+      <div class="detail-row"><div class="detail-key">Status</div><div class="detail-val"><span class="badge badge-${driver.status || 'pending'}">${(driver.status || 'pending')}</span></div></div>
+      <div class="detail-row"><div class="detail-key">Joined</div><div class="detail-val">${new Date(driver.joinedAt).toLocaleString()}</div></div>
+      <div style="margin-top:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Notes</div>
+        <textarea class="notes-area" id="modal-notes" placeholder="Add notes about this driver...">${driver.notes || ''}</textarea>
+      </div>`;
+
+    document.getElementById('modal-actions').innerHTML = `
+      <button class="btn btn-success" onclick="updateStatusFromModal('${driver.id}','approved')">✓ Approve</button>
+      <button class="btn btn-danger"  onclick="updateStatusFromModal('${driver.id}','rejected')">✕ Reject</button>
+      <button class="btn btn-outline" onclick="saveNotes('${driver.id}')">💾 Save Notes</button>
+      <button class="btn btn-outline" style="color:var(--danger);border-color:var(--danger)" onclick="deleteDriver('${driver.id}')">🗑 Delete</button>
+    `;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+  document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+  async function updateStatus(id, status) {
+    await fetch(`/api/admin/drivers/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPw },
+      body: JSON.stringify({ status })
+    });
+    showToast(`Driver ${status}`, status === 'approved' ? 'success' : 'danger');
+    loadDrivers(currentPage);
+    fetchStats().then(renderOverview);
+  }
+
+  async function updateStatusFromModal(id, status) {
+    await updateStatus(id, status);
+    closeModal();
+  }
+
+  async function saveNotes(id) {
+    const notes = document.getElementById('modal-notes').value;
+    await fetch(`/api/admin/drivers/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPw },
+      body: JSON.stringify({ notes })
+    });
+    showToast('Notes saved', 'success');
+  }
+
+  async function deleteDriver(id) {
+    if (!confirm('Are you sure you want to remove this driver from the waitlist?')) return;
+    await fetch(`/api/admin/drivers/${id}`, {
+      method: 'DELETE',
+      headers: { 'x-admin-password': adminPw }
+    });
+    closeModal();
+    showToast('Driver removed');
+    loadDrivers(currentPage);
+    fetchStats().then(renderOverview);
+  }
+
+  // ── Analytics ─────────────────────────────────────────────────
+  function renderAnalytics() {
+    if (!statsCache) { fetchStats().then(renderAnalytics); return; }
+    const s = statsCache;
+
+    document.getElementById('analytics-total').textContent = `${s.total} drivers`;
+    document.getElementById('analytics-week').textContent = s.weekCount;
+    const pct = Math.min(100, Math.round(s.total / 500 * 100));
+    document.getElementById('analytics-pct').textContent = `${pct}%`;
+    document.getElementById('analytics-progress').style.width = `${pct}%`;
+
+    // Line chart
+    const labels = Object.keys(s.dailyCounts).map(l => l.slice(5));
+    const values = Object.values(s.dailyCounts);
+    if (analyticsLineChartInst) analyticsLineChartInst.destroy();
+    analyticsLineChartInst = new Chart(document.getElementById('analyticsLineChart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Signups',
+          data: values,
+          backgroundColor: 'rgba(245,166,35,0.8)',
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#F0F2F5' }, ticks: { stepSize: 1 } },
+          x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } }
+        }
+      }
+    });
+
+    // City doughnut
+    const cityLabels = s.byCity.slice(0, 6).map(c => c[0]);
+    const cityVals   = s.byCity.slice(0, 6).map(c => c[1]);
+    const COLORS = ['#F5A623','#1A1A2E','#27AE60','#2980B9','#9B59B6','#E74C3C'];
+    if (cityDoughnutInst) cityDoughnutInst.destroy();
+    cityDoughnutInst = new Chart(document.getElementById('cityDoughnut'), {
+      type: 'doughnut',
+      data: {
+        labels: cityLabels,
+        datasets: [{ data: cityVals, backgroundColor: COLORS, borderWidth: 0 }]
+      },
+      options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }, cutout: '55%' }
+    });
+
+    // Ownership breakdown
+    const ownTotal = s.total || 1;
+    document.getElementById('ownership-breakdown').innerHTML = [
+      { label: 'Owns Bajaj', val: s.byOwnership.owner, color: '#F5A623' },
+      { label: 'Rents/Leases', val: s.byOwnership.renter, color: '#1A1A2E' },
+    ].map(item => `
+      <div class="breakdown-item">
+        <div class="breakdown-label"><div class="color-dot" style="background:${item.color}"></div>${item.label}</div>
+        <div>
+          <span class="breakdown-pct">${item.val}</span>
+          <span style="color:var(--muted);font-size:12px"> · ${Math.round(item.val/ownTotal*100)}%</span>
+        </div>
+      </div>
+    `).join('');
+
+    // Smartphone breakdown
+    document.getElementById('smartphone-breakdown').innerHTML = [
+      { label: 'Android', val: s.bySmartphone.android, color: '#27AE60' },
+      { label: 'iPhone', val: s.bySmartphone.ios, color: '#2980B9' },
+      { label: 'Feature Phone', val: s.bySmartphone.feature, color: '#8E9DB4' },
+    ].map(item => `
+      <div class="breakdown-item">
+        <div class="breakdown-label"><div class="color-dot" style="background:${item.color}"></div>${item.label}</div>
+        <div>
+          <span class="breakdown-pct">${item.val}</span>
+          <span style="color:var(--muted);font-size:12px"> · ${Math.round(item.val/ownTotal*100)}%</span>
+        </div>
+      </div>
+    `).join('');
+
+    // Experience breakdown
+    document.getElementById('experience-breakdown').innerHTML = Object.entries(s.byExperience)
+      .sort((a,b) => b[1]-a[1])
+      .map(([label, val], i) => `
+        <div class="breakdown-item">
+          <div class="breakdown-label"><div class="color-dot" style="background:${COLORS[i % COLORS.length]}"></div>${label}</div>
+          <div>
+            <span class="breakdown-pct">${val}</span>
+            <span style="color:var(--muted);font-size:12px"> · ${Math.round(val/ownTotal*100)}%</span>
+          </div>
+        </div>
+      `).join('') || '<div style="color:var(--muted);font-size:13px">No data yet</div>';
+  }
+
+  // ── Export CSV ────────────────────────────────────────────────
+  function exportCSV() {
+    window.open(`/api/waitlist/export?pw=${adminPw}`, '_blank');
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `show ${type}`;
+    setTimeout(() => t.className = '', 3000);
+  }
+</script>
+</body>
+</html>
