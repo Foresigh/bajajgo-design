@@ -228,5 +228,6 @@ app.get('/api/waitlist/export', requireAuth, (req, res) => {
 app.get('/',          (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/drivers',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'drivers.html')));
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+app.get('/design',    (req, res) => res.sendFile(path.join(__dirname, 'public', 'design.html')));
 
 app.listen(PORT, () => console.log(`BajajGo running on port ${PORT}`));
