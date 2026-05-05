@@ -57,9 +57,11 @@
     }
     .hero-bg {
       position: absolute; inset: 0;
-      background-image: url('https://images.unsplash.com/photo-1578895101408-1a36b834405b?auto=format&fit=crop&w=1800&q=60');
-      background-size: cover; background-position: center;
-      opacity: 0.18;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(245,166,35,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(52,152,219,0.06) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 1;
     }
     .hero-overlay {
       position: absolute; inset: 0;
@@ -574,7 +576,36 @@
     <div class="problem-grid">
       <div class="reveal">
         <div class="problem-img">
-          <img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=800&q=80" alt="Busy Ethiopian street" />
+          <!-- CSS Ethiopian street scene -->
+          <div style="width:100%;height:380px;background:linear-gradient(180deg,#87CEEB 0%,#B8D4E8 40%,#C4A882 40%,#B89660 100%);position:relative;overflow:hidden">
+            <!-- Sky -->
+            <div style="position:absolute;top:8%;left:15%;width:60px;height:25px;background:rgba(255,255,255,0.8);border-radius:50px;filter:blur(4px)"></div>
+            <div style="position:absolute;top:5%;left:45%;width:90px;height:30px;background:rgba(255,255,255,0.6);border-radius:50px;filter:blur(6px)"></div>
+            <!-- Buildings -->
+            <div style="position:absolute;bottom:38%;left:5%;width:14%;height:45%;background:#D4956A;border-radius:4px 4px 0 0"></div>
+            <div style="position:absolute;bottom:38%;left:5%;width:14%;height:10%;background:#C4845A;top:auto"></div>
+            <div style="position:absolute;bottom:38%;left:20%;width:10%;height:55%;background:#C8A882;border-radius:4px 4px 0 0"></div>
+            <div style="position:absolute;bottom:38%;left:31%;width:16%;height:40%;background:#B8947A;border-radius:4px 4px 0 0"></div>
+            <div style="position:absolute;bottom:38%;right:5%;width:18%;height:50%;background:#D4A07A;border-radius:4px 4px 0 0"></div>
+            <div style="position:absolute;bottom:38%;right:24%;width:12%;height:35%;background:#C49060;border-radius:4px 4px 0 0"></div>
+            <!-- Road -->
+            <div style="position:absolute;bottom:0;left:0;right:0;height:38%;background:#6B6B6B"></div>
+            <div style="position:absolute;bottom:17%;left:0;right:0;height:3px;background:rgba(255,255,255,0.2)"></div>
+            <!-- Road markings -->
+            <div style="position:absolute;bottom:18%;left:10%;width:12%;height:3px;background:#FFD700;border-radius:2px"></div>
+            <div style="position:absolute;bottom:18%;left:30%;width:12%;height:3px;background:#FFD700;border-radius:2px"></div>
+            <div style="position:absolute;bottom:18%;left:50%;width:12%;height:3px;background:#FFD700;border-radius:2px"></div>
+            <div style="position:absolute;bottom:18%;left:70%;width:12%;height:3px;background:#FFD700;border-radius:2px"></div>
+            <!-- Bajaj on road -->
+            <div style="position:absolute;bottom:22%;left:20%;font-size:52px;filter:drop-shadow(2px 4px 6px rgba(0,0,0,0.4))">🛺</div>
+            <!-- Person waiting -->
+            <div style="position:absolute;bottom:36%;right:22%;font-size:28px">🧍</div>
+            <div style="position:absolute;bottom:36%;right:30%;font-size:28px">🧍‍♀️</div>
+            <!-- Speech bubble showing negotiation -->
+            <div style="position:absolute;bottom:58%;right:16%;background:#fff;border-radius:12px 12px 0 12px;padding:6px 10px;font-size:11px;font-weight:700;color:#E74C3C;box-shadow:0 2px 8px rgba(0,0,0,0.2);white-space:nowrap">
+              😤 50 birr! — No, 30!
+            </div>
+          </div>
           <div class="problem-img-overlay"></div>
           <div class="problem-img-tag">🇪🇹 The daily reality</div>
         </div>
@@ -653,7 +684,38 @@
     <div class="split-grid">
       <div class="reveal">
         <div class="split-img">
-          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80" alt="Bajaj driver" />
+          <!-- CSS driver earnings scene -->
+          <div style="width:100%;height:480px;background:linear-gradient(160deg,#0D0D1A 0%,#1A2E1A 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+            <!-- Background glow -->
+            <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,0.2),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+            <!-- Big bajaj centrepiece -->
+            <div style="font-size:140px;filter:drop-shadow(0 8px 32px rgba(245,166,35,0.4));z-index:2;margin-top:20px">🛺</div>
+            <!-- Floating stat cards -->
+            <div style="position:absolute;top:12%;left:6%;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:3;min-width:130px">
+              <div style="font-size:10px;font-weight:700;color:#8E9DB4;text-transform:uppercase;margin-bottom:4px">Today's Earnings</div>
+              <div style="font-size:24px;font-weight:900;color:#F5A623">ETB 320</div>
+              <div style="font-size:11px;color:#27AE60;font-weight:600;margin-top:2px">↑ 8 trips completed</div>
+            </div>
+            <div style="position:absolute;top:12%;right:6%;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:3;min-width:120px">
+              <div style="font-size:10px;font-weight:700;color:#8E9DB4;text-transform:uppercase;margin-bottom:4px">Rating</div>
+              <div style="font-size:24px;font-weight:900;color:#F5A623">4.8 ⭐</div>
+              <div style="font-size:11px;color:#8E9DB4;font-weight:600;margin-top:2px">342 trips total</div>
+            </div>
+            <div style="position:absolute;bottom:22%;left:6%;background:linear-gradient(135deg,#F5A623,#D4891A);border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(245,166,35,0.4);z-index:3;min-width:130px">
+              <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;margin-bottom:4px">This Week</div>
+              <div style="font-size:22px;font-weight:900;color:#fff">ETB 2,100</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.8);font-weight:600;margin-top:2px">Goal: ETB 2,000 ✓</div>
+            </div>
+            <div style="position:absolute;bottom:22%;right:6%;background:#1A1A2E;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,0.4);z-index:3;min-width:120px">
+              <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:4px">Commission</div>
+              <div style="font-size:22px;font-weight:900;color:#27AE60">ETB 0</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:600;margin-top:2px">First 30 days free</div>
+            </div>
+            <!-- Online badge -->
+            <div style="position:absolute;bottom:8%;left:50%;transform:translateX(-50%);background:#27AE60;border-radius:20px;padding:8px 20px;font-size:13px;font-weight:800;color:#fff;z-index:3;white-space:nowrap">
+              🟢 Online · Accepting rides
+            </div>
+          </div>
           <div class="split-img-badge">
             <div class="split-img-badge-title">💰 Earn more with every trip</div>
             <div class="split-img-badge-sub">Average ETB 2,000+ per week · Your schedule</div>
@@ -733,7 +795,47 @@
       </div>
       <div class="reveal" style="order:1">
         <div class="split-img passenger-img">
-          <img src="https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&w=800&q=80" alt="Passenger using app" />
+          <!-- CSS passenger tracking scene -->
+          <div style="width:100%;height:480px;background:#E8F0E4;position:relative;overflow:hidden">
+            <!-- Map tiles -->
+            <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(160,185,150,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(160,185,150,0.4) 1px,transparent 1px);background-size:32px 32px"></div>
+            <!-- Roads -->
+            <div style="position:absolute;left:0;right:0;top:35%;height:14px;background:rgba(255,255,255,0.9)"></div>
+            <div style="position:absolute;left:0;right:0;top:65%;height:12px;background:rgba(255,255,255,0.9)"></div>
+            <div style="position:absolute;top:0;bottom:0;left:40%;width:13px;background:rgba(255,255,255,0.9)"></div>
+            <div style="position:absolute;top:0;bottom:0;left:72%;width:11px;background:rgba(255,255,255,0.9)"></div>
+            <!-- Blocks -->
+            <div style="position:absolute;top:5%;left:5%;width:30%;height:26%;background:rgba(200,215,190,0.7);border-radius:6px"></div>
+            <div style="position:absolute;top:5%;left:46%;width:22%;height:26%;background:rgba(200,215,190,0.7);border-radius:6px"></div>
+            <div style="position:absolute;top:42%;left:5%;width:30%;height:18%;background:rgba(200,215,190,0.7);border-radius:6px"></div>
+            <div style="position:absolute;top:42%;left:46%;width:22%;height:18%;background:rgba(200,215,190,0.7);border-radius:6px"></div>
+            <div style="position:absolute;top:68%;left:5%;width:30%;height:26%;background:rgba(200,215,190,0.7);border-radius:6px"></div>
+            <!-- Route line -->
+            <div style="position:absolute;top:22%;left:28%;width:4px;height:160px;background:linear-gradient(#F5A623,#1A1A2E);border-radius:2px;transform:rotate(18deg);z-index:2"></div>
+            <!-- Bajaj moving -->
+            <div style="position:absolute;top:18%;left:24%;font-size:36px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.3));z-index:3;animation:moveDown 3s ease-in-out infinite alternate">🛺</div>
+            <!-- Destination pin -->
+            <div style="position:absolute;top:62%;left:50%;font-size:32px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));z-index:3">🏁</div>
+            <!-- ETA card -->
+            <div style="position:absolute;top:6%;left:50%;transform:translateX(-50%);background:#1A1A2E;border-radius:16px;padding:10px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:4;white-space:nowrap">
+              <div style="color:rgba(255,255,255,0.6);font-size:10px;text-align:center">Arriving in</div>
+              <div style="color:#F5A623;font-size:22px;font-weight:900;text-align:center">2 min</div>
+            </div>
+            <!-- Driver info card at bottom -->
+            <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 0 0;padding:16px;box-shadow:0 -4px 20px rgba(0,0,0,0.1);z-index:4">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#F5A623,#D4891A);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700;flex-shrink:0">T</div>
+                <div style="flex:1">
+                  <div style="font-size:14px;font-weight:800">Tadesse Bekele</div>
+                  <div style="font-size:11px;color:#8E9DB4">⭐ 4.8 · AA-3-45678 · Blue Bajaj</div>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <div style="width:34px;height:34px;border-radius:10px;background:#F5F7FA;display:flex;align-items:center;justify-content:center;font-size:16px">📞</div>
+                  <div style="width:34px;height:34px;border-radius:10px;background:#FDECEC;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#E74C3C">SOS</div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="split-img-badge">
             <div class="split-img-badge-title">📍 Your driver is 2 min away</div>
             <div class="split-img-badge-sub">Tadesse B. · ⭐ 4.8 · AA-3-45678</div>
@@ -754,7 +856,7 @@
     </div>
     <div class="cities-grid">
       <div class="city-card reveal reveal-delay-1">
-        <img src="https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=400&q=80" alt="Addis Ababa"/>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#2C3E50,#3498DB);display:flex;align-items:center;justify-content:center;font-size:56px">🏙</div>
         <div class="city-card-overlay"></div>
         <div class="city-card-content">
           <div class="city-name">Addis Ababa</div>
@@ -762,7 +864,7 @@
         </div>
       </div>
       <div class="city-card reveal reveal-delay-1">
-        <img src="https://images.unsplash.com/photo-1609780447631-05b93e5a88ea?auto=format&fit=crop&w=400&q=80" alt="Bahir Dar"/>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1A6B3C,#27AE60);display:flex;align-items:center;justify-content:center;font-size:56px">🌊</div>
         <div class="city-card-overlay"></div>
         <div class="city-card-content">
           <div class="city-name">Bahir Dar</div>
@@ -770,7 +872,7 @@
         </div>
       </div>
       <div class="city-card reveal reveal-delay-2">
-        <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=400&q=80" alt="Hawassa"/>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#16A085,#1ABC9C);display:flex;align-items:center;justify-content:center;font-size:56px">🏞</div>
         <div class="city-card-overlay"></div>
         <div class="city-card-content">
           <div class="city-name">Hawassa</div>
@@ -778,7 +880,7 @@
         </div>
       </div>
       <div class="city-card reveal reveal-delay-3">
-        <img src="https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?auto=format&fit=crop&w=400&q=80" alt="Gondar"/>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#6C3483,#9B59B6);display:flex;align-items:center;justify-content:center;font-size:56px">🏰</div>
         <div class="city-card-overlay"></div>
         <div class="city-card-content">
           <div class="city-name">Gondar</div>
@@ -786,7 +888,7 @@
         </div>
       </div>
       <div class="city-card reveal reveal-delay-3">
-        <img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?auto=format&fit=crop&w=400&q=80" alt="Mekelle"/>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#922B21,#E74C3C);display:flex;align-items:center;justify-content:center;font-size:56px">⛰</div>
         <div class="city-card-overlay"></div>
         <div class="city-card-content">
           <div class="city-name">Mekelle</div>
@@ -794,7 +896,7 @@
         </div>
       </div>
       <div class="city-card reveal reveal-delay-4">
-        <img src="https://images.unsplash.com/photo-1495567720989-cebdbdd97913?auto=format&fit=crop&w=400&q=80" alt="Dire Dawa"/>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#D4891A,#F5A623);display:flex;align-items:center;justify-content:center;font-size:56px">🌅</div>
         <div class="city-card-overlay"></div>
         <div class="city-card-content">
           <div class="city-name">Dire Dawa</div>
@@ -891,11 +993,33 @@
         </div>
       </div>
       <div class="app-phones">
+        <!-- Mini phone 1: map screen -->
         <div class="app-phone-mini">
-          <img src="https://images.unsplash.com/photo-1512941937938-a272e7479d57?auto=format&fit=crop&w=200&q=80" alt="App screen"/>
+          <div style="width:100%;height:100%;background:#E8F0E4;position:relative;overflow:hidden;display:flex;flex-direction:column">
+            <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(160,185,150,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(160,185,150,0.4) 1px,transparent 1px);background-size:18px 18px"></div>
+            <div style="position:absolute;left:0;right:0;top:40%;height:8px;background:rgba(255,255,255,0.9)"></div>
+            <div style="position:absolute;top:0;bottom:0;left:45%;width:7px;background:rgba(255,255,255,0.9)"></div>
+            <div style="position:absolute;top:32%;left:36%;font-size:20px;z-index:2">📍</div>
+            <div style="position:absolute;top:20%;left:58%;font-size:14px;z-index:2">🛺</div>
+            <div style="position:absolute;top:55%;left:20%;font-size:14px;z-index:2">🛺</div>
+            <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;padding:8px;border-radius:12px 12px 0 0;z-index:3">
+              <div style="background:#F5F7FA;border-radius:8px;padding:6px 8px;font-size:8px;color:#8E9DB4">🔍 Where to?</div>
+            </div>
+          </div>
         </div>
+        <!-- Mini phone 2: earnings screen -->
         <div class="app-phone-mini">
-          <img src="https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&w=200&q=80" alt="App screen"/>
+          <div style="width:100%;height:100%;background:#1A1A2E;display:flex;flex-direction:column;padding:12px 8px;gap:6px">
+            <div style="color:rgba(255,255,255,0.5);font-size:7px;font-weight:700;text-align:center">TODAY'S EARNINGS</div>
+            <div style="color:#F5A623;font-size:20px;font-weight:900;text-align:center">ETB 320</div>
+            <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:7px;display:flex;justify-content:space-between">
+              <div style="text-align:center"><div style="color:#fff;font-size:11px;font-weight:800">8</div><div style="color:rgba(255,255,255,0.4);font-size:7px">Trips</div></div>
+              <div style="text-align:center"><div style="color:#27AE60;font-size:11px;font-weight:800">4.8⭐</div><div style="color:rgba(255,255,255,0.4);font-size:7px">Rating</div></div>
+            </div>
+            <div style="background:#F5A623;border-radius:8px;padding:6px;text-align:center;margin-top:auto">
+              <div style="color:#fff;font-size:8px;font-weight:800">🟢 Online</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
