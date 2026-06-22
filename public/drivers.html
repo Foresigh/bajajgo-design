@@ -639,17 +639,17 @@
         <form id="waitlist-form">
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">First Name</label>
+              <label class="form-label" data-i18n="lbl_first_name">First Name</label>
               <input class="form-input" type="text" name="firstName" placeholder="Tadesse" required />
             </div>
             <div class="form-group">
-              <label class="form-label">Last Name</label>
+              <label class="form-label" data-i18n="lbl_last_name">Last Name</label>
               <input class="form-input" type="text" name="lastName" placeholder="Bekele" required />
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Phone Number</label>
+            <label class="form-label" data-i18n="lbl_phone">Phone Number</label>
             <div style="display:flex;gap:8px">
               <select class="form-select" style="width:90px">
                 <option>+251</option>
@@ -660,9 +660,9 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">City</label>
+            <label class="form-label" data-i18n="lbl_city">City</label>
             <select class="form-select" name="city" required>
-              <option value="" disabled selected>Select your city</option>
+              <option value="" disabled selected data-i18n="placeholder_city">Select your city</option>
               <option>Addis Ababa</option>
               <option>Bahir Dar</option>
               <option>Gondar</option>
@@ -677,13 +677,13 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Vehicle Plate</label>
+              <label class="form-label" data-i18n="lbl_plate">Vehicle Plate</label>
               <input class="form-input" type="text" name="plate" placeholder="AA 3 45678" />
             </div>
             <div class="form-group">
-              <label class="form-label">Years Driving Bajaj</label>
+              <label class="form-label" data-i18n="lbl_experience">Years Driving Bajaj</label>
               <select class="form-select" name="experience">
-                <option value="" disabled selected>Select</option>
+                <option value="" disabled selected data-i18n="placeholder_select">Select</option>
                 <option>Less than 1 year</option>
                 <option>1–2 years</option>
                 <option>3–5 years</option>
@@ -693,28 +693,28 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Do you own your Bajaj?</label>
+            <label class="form-label" data-i18n="lbl_ownership">Do you own your Bajaj?</label>
             <div class="checkbox-group">
               <label class="checkbox-item">
-                <input type="radio" name="ownership" value="owner" required /> Yes, I own my Bajaj
+                <input type="radio" name="ownership" value="owner" required /> <span data-i18n="own_yes">Yes, I own my Bajaj</span>
               </label>
               <label class="checkbox-item">
-                <input type="radio" name="ownership" value="renter" /> No, I rent / lease it
+                <input type="radio" name="ownership" value="renter" /> <span data-i18n="own_no">No, I rent / lease it</span>
               </label>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Do you have a smartphone?</label>
+            <label class="form-label" data-i18n="lbl_smartphone">Do you have a smartphone?</label>
             <div class="checkbox-group">
               <label class="checkbox-item">
-                <input type="radio" name="smartphone" value="yes" required /> Yes, Android
+                <input type="radio" name="smartphone" value="yes" required /> <span data-i18n="phone_android">Yes, Android</span>
               </label>
               <label class="checkbox-item">
-                <input type="radio" name="smartphone" value="ios" /> Yes, iPhone
+                <input type="radio" name="smartphone" value="ios" /> <span data-i18n="phone_ios">Yes, iPhone</span>
               </label>
               <label class="checkbox-item">
-                <input type="radio" name="smartphone" value="no" /> No, feature phone
+                <input type="radio" name="smartphone" value="no" /> <span data-i18n="phone_feature">No, feature phone</span>
               </label>
             </div>
           </div>
@@ -724,7 +724,7 @@
           <button type="submit" class="submit-btn" id="submit-btn" data-i18n="btn_join">
             🛺 Join Driver Waitlist — Free
           </button>
-          <div class="form-note">🔒 Your info is private. No spam. We'll only contact you about BajajGo launch.</div>
+          <div class="form-note" data-i18n="form_note">🔒 Your info is private. No spam. We'll only contact you about BajajGo launch.</div>
         </form>
       </div>
 
@@ -803,7 +803,7 @@
     e.preventDefault();
     const btn = document.getElementById('submit-btn');
     const errEl = document.getElementById('form-error');
-    btn.textContent = 'Joining...';
+    btn.textContent = (window.BJG_LANG && window.BJG_LANG.joining) || 'Joining...';
     btn.disabled = true;
     errEl.style.display = 'none';
 
@@ -858,6 +858,15 @@
       form_title: 'Sign Up as a Driver 🛺',
       form_sub: "Takes less than 2 minutes. We'll contact you when we launch.",
       btn_join: '🛺 Join Driver Waitlist — Free',
+      lbl_first_name: 'First Name', lbl_last_name: 'Last Name',
+      lbl_phone: 'Phone Number', lbl_city: 'City',
+      lbl_plate: 'Vehicle Plate', lbl_experience: 'Years Driving Bajaj',
+      lbl_ownership: 'Do you own your Bajaj?', lbl_smartphone: 'Do you have a smartphone?',
+      own_yes: 'Yes, I own my Bajaj', own_no: 'No, I rent / lease it',
+      phone_android: 'Yes, Android', phone_ios: 'Yes, iPhone', phone_feature: 'No, feature phone',
+      placeholder_city: 'Select your city', placeholder_select: 'Select',
+      form_note: "🔒 Your info is private. No spam. We'll only contact you about BajajGo launch.",
+      joining: 'Joining...',
     },
     am: {
       nav_join: 'ዝርዝር ይቀላቀሉ →',
@@ -866,6 +875,15 @@
       form_title: 'እንደ ሹፌር ይመዝገቡ 🛺',
       form_sub: 'ከ2 ደቂቃ ያነሰ ጊዜ ይወስዳል። ስናስጀምር እናሳውቅዎታለን።',
       btn_join: '🛺 ለሹፌር ዝርዝር ይቀላቀሉ — ነፃ',
+      lbl_first_name: 'የመጀመሪያ ስም', lbl_last_name: 'የአያት ስም',
+      lbl_phone: 'ስልክ ቁጥር', lbl_city: 'ከተማ',
+      lbl_plate: 'የተሽከርካሪ ሰሌዳ', lbl_experience: 'ባጃጅ ያሽከረከሩ ዓመታት',
+      lbl_ownership: 'ባጃጅዎ የርስዎ ነው?', lbl_smartphone: 'ስማርትፎን አልዎት?',
+      own_yes: 'አዎ፣ ባጃጅዬ የርሴ ነው', own_no: 'አይደለም፣ ተከራይቻለሁ',
+      phone_android: 'አዎ፣ አንድሮይድ', phone_ios: 'አዎ፣ አይፎን', phone_feature: 'አይደለም፣ ቀላል ፎን',
+      placeholder_city: 'ከተማዎን ይምረጡ', placeholder_select: 'ይምረጡ',
+      form_note: '🔒 መረጃዎ ግላዊ ነው። ስናስጀምር ብቻ እናሳውቅዎታለን።',
+      joining: 'እየቀላቀሉ...',
     },
     or: {
       nav_join: 'Tarree Seeni →',
@@ -874,6 +892,15 @@
       form_title: 'Akka Konkolaachitaatti Galmaaʼi 🛺',
       form_sub: 'Daqiiqaa 2 gadi fudhata. Yeroo jalqabnu si beeksifna.',
       btn_join: '🛺 Tarree Konkolaachitootaa Seeni — Bilisaan',
+      lbl_first_name: 'Maqaa Jalqabaa', lbl_last_name: 'Maqaa Maatii',
+      lbl_phone: 'Lakkoofsa Bilbilaa', lbl_city: 'Magaalaa',
+      lbl_plate: 'Pleetii Konkolaataa', lbl_experience: 'Waggaa Bajaj Ooftan',
+      lbl_ownership: 'Bajajni Keessan Keessanidha?', lbl_smartphone: 'Bilbila Ogummaa Qabdaa?',
+      own_yes: 'Eeyyee, Bajaj koo koo dha', own_no: 'Lakki, kireeffadheera',
+      phone_android: 'Eeyyee, Android', phone_ios: 'Eeyyee, iPhone', phone_feature: 'Lakki, bilbila salphaa',
+      placeholder_city: 'Magaalaa kee filadhu', placeholder_select: 'Filadhu',
+      form_note: '🔒 Odeeffannoon kee dhuunfaa dha. Yeroo jalqabnu qofa si beeksifna.',
+      joining: 'Seenaa jira...',
     },
     ti: {
       nav_join: 'ዝርዝር ተሳተፍ →',
@@ -882,6 +909,15 @@
       form_title: 'ከም ሹፌር ምዝገባ 🛺',
       form_sub: 'ካብ 2 ደቒቓ ኣይሓልፍን። ክንጅምር እንከሎና ክንሕብረካ ኢና።',
       btn_join: '🛺 ዝርዝር ሹፌራት ተሳተፍ — ብነጻ',
+      lbl_first_name: 'ቀዳማይ ስም', lbl_last_name: 'ናይ ስድራ ስም',
+      lbl_phone: 'ቁጽሪ ስልኪ', lbl_city: 'ከተማ',
+      lbl_plate: 'ናይ መኪና ፕሌት', lbl_experience: 'ዓመታት ባጃጅ ምዝዋር',
+      lbl_ownership: 'ባጃጅ ናትካ ድዩ?', lbl_smartphone: 'ስማርትፎን ኣለካ?',
+      own_yes: 'እወ፣ ባጃጅ ናተይ እዩ', own_no: 'ኣይኮነን፣ ካብ ካሊእ ሊዝ ወሲደዮ',
+      phone_android: 'እወ፣ ኣንድሮይድ', phone_ios: 'እወ፣ ኣይፎን', phone_feature: 'ኣይኮነን፣ ቀሊል ፎን',
+      placeholder_city: 'ከተማኻ ምረጽ', placeholder_select: 'ምረጽ',
+      form_note: '🔒 ሓበሬታኻ ብሕትዊ እዩ። ክንጅምር እንከሎና ጥራሕ ክንሕብረካ ኢና።',
+      joining: 'ይምዝገብ ኣሎ...',
     },
     si: {
       nav_join: 'Xiinxalte Seenso →',
@@ -890,6 +926,15 @@
       form_title: 'Xaphooshsho Giddo Galmaaʼi 🛺',
       form_sub: 'Daqiiqaa 2 aana wori. Jalqabbinoonke uulla ninna huwatinoommo.',
       btn_join: '🛺 Xaphooshshannote Xiinxalte Seenso — Shaqqadaakki',
+      lbl_first_name: 'Maga Jalqabaa', lbl_last_name: 'Maga Dooggaa',
+      lbl_phone: 'Mobilete Lakkoofsa', lbl_city: 'Katama',
+      lbl_plate: 'Konkolaatete Pleetii', lbl_experience: 'Bajaj Ooftete Diro',
+      lbl_ownership: 'Bajajuwa Ittete?', lbl_smartphone: 'Mobilete Ogummaawa Qineessittohe?',
+      own_yes: 'Ee, bajajuma keenya', own_no: 'Chii, kireeffadhe',
+      phone_android: 'Ee, Android', phone_ios: 'Ee, iPhone', phone_feature: 'Chii, mobilete salphaa',
+      placeholder_city: 'Katamakki filadhu', placeholder_select: 'Filadhu',
+      form_note: '🔒 Odeeffannoowa dhuunfaa. Jalqabbinoonke uulla huwatinoommo.',
+      joining: 'Seenna jiroommo...',
     },
   };
 
@@ -907,9 +952,10 @@
     document.querySelectorAll('.lang-option').forEach(el =>
       el.classList.toggle('active', el.dataset.lang === lang)
     );
+    const L = window.BJG_LANG;
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
-      if (T[key]) el.innerHTML = T[key];
+      if (L[key] !== undefined) el.innerHTML = L[key];
     });
     localStorage.setItem('bjg_lang', lang);
     document.getElementById('langBtn').classList.remove('open');
