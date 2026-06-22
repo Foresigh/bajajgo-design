@@ -10,7 +10,10 @@ const API_ORIGIN = process.env.API_ORIGIN || 'https://bajajgo-api-production.up.
 
 // ── PostgreSQL ────────────────────────────────────────────────────
 const pool = process.env.DATABASE_URL
-  ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.DATABASE_URL.includes('railway.internal') ? false : { rejectUnauthorized: false },
+    })
   : null;
 
 async function dbReady() {
