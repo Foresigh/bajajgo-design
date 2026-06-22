@@ -1,11 +1,21 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'bajajgo2026';
 const DATA_FILE = path.join(__dirname, 'data', 'waitlist.json');
+
+const API_ORIGIN = process.env.API_ORIGIN || 'https://bajajgo-api-production.up.railway.app';
+
+// ── Proxy /api/v1/* and WebSocket to the API server ──────────────
+app.use('/api/v1', createProxyMiddleware({
+  target: API_ORIGIN,
+  changeOrigin: true,
+  ws: true,
+}));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
