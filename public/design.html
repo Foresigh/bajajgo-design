@@ -45,6 +45,18 @@
     .logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
     .logo span { color: var(--primary); }
     .nav-links { display: flex; gap: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .lang-switcher { position: relative; }
+    .lang-btn { display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit;white-space:nowrap; }
+    .lang-btn:hover { border-color:var(--primary);color:var(--primary); }
+    .lang-btn .chevron { font-size:10px;opacity:0.6;transition:transform 0.2s; }
+    .lang-btn.open .chevron { transform:rotate(180deg); }
+    .lang-dropdown { position:absolute;top:calc(100% + 8px);right:0;background:#1A1A2E;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:6px;min-width:190px;box-shadow:0 16px 48px rgba(0,0,0,0.5);opacity:0;visibility:hidden;transform:translateY(-8px);transition:all 0.18s ease;z-index:200; }
+    .lang-dropdown.open { opacity:1;visibility:visible;transform:translateY(0); }
+    .lang-option { display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s;color:rgba(255,255,255,0.75);font-size:13px;font-weight:500; }
+    .lang-option:hover { background:rgba(255,255,255,0.07);color:#fff; }
+    .lang-option.active { color:var(--primary);background:rgba(245,166,35,0.1); }
+    .lang-option .lang-native { font-size:11px;opacity:0.5;margin-left:auto; }
     .nav-links a {
       color: rgba(255,255,255,0.7);
       text-decoration: none;
@@ -566,6 +578,18 @@
     <a href="#driver">Driver App</a>
     <a href="#admin">Admin Dashboard</a>
     <a href="#design-spec">Design Spec</a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-switcher" id="langSwitcher">
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 <span id="langBtnLabel">EN</span> <span class="chevron">▼</span></button>
+      <div class="lang-dropdown" id="langDropdown">
+        <div class="lang-option active" data-lang="en" onclick="setLang('en')">🇬🇧 English</div>
+        <div class="lang-option" data-lang="am" onclick="setLang('am')">🇪🇹 አማርኛ <span class="lang-native">Amharic</span></div>
+        <div class="lang-option" data-lang="or" onclick="setLang('or')">🇪🇹 Afaan Oromoo <span class="lang-native">Oromo</span></div>
+        <div class="lang-option" data-lang="ti" onclick="setLang('ti')">🇪🇹 ትግርኛ <span class="lang-native">Tigrinya</span></div>
+        <div class="lang-option" data-lang="si" onclick="setLang('si')">🇪🇹 Sidaamu Afoo <span class="lang-native">Sidama</span></div>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -1793,5 +1817,27 @@
   </div>
 </footer>
 
+<script>
+  const LANG_LABELS = { en:'EN', am:'አማርኛ', or:'Oromoo', ti:'ትግርኛ', si:'Sidama' };
+  function toggleLang() {
+    document.getElementById('langBtn').classList.toggle('open');
+    document.getElementById('langDropdown').classList.toggle('open');
+  }
+  function setLang(lang) {
+    document.getElementById('langBtnLabel').textContent = LANG_LABELS[lang];
+    document.querySelectorAll('.lang-option').forEach(el => el.classList.toggle('active', el.dataset.lang === lang));
+    localStorage.setItem('bjg_lang', lang);
+    document.getElementById('langBtn').classList.remove('open');
+    document.getElementById('langDropdown').classList.remove('open');
+  }
+  document.addEventListener('click', e => {
+    if (!document.getElementById('langSwitcher').contains(e.target)) {
+      document.getElementById('langBtn').classList.remove('open');
+      document.getElementById('langDropdown').classList.remove('open');
+    }
+  });
+  const saved = localStorage.getItem('bjg_lang');
+  if (saved && saved !== 'en') setLang(saved);
+</script>
 </body>
 </html>

@@ -41,7 +41,44 @@
     .nav-links { display: flex; gap: 6px; margin-left: 32px; }
     .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; padding: 7px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; transition: all 0.2s; }
     .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.08); }
-    .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+    .nav-cta { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+
+    /* ── LANGUAGE SWITCHER ── */
+    .lang-switcher { position: relative; }
+    .lang-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: transparent; color: rgba(255,255,255,0.85);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
+      white-space: nowrap;
+    }
+    .lang-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .lang-btn .globe { font-size: 15px; }
+    .lang-btn .chevron { font-size: 10px; opacity: 0.6; transition: transform 0.2s; }
+    .lang-btn.open .chevron { transform: rotate(180deg); }
+    .lang-dropdown {
+      position: absolute; top: calc(100% + 8px); right: 0;
+      background: #1A1A2E; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 6px;
+      min-width: 190px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: all 0.18s ease; z-index: 200;
+    }
+    .lang-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .lang-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 9px;
+      cursor: pointer; transition: background 0.15s;
+      color: rgba(255,255,255,0.75); font-size: 13px; font-weight: 500;
+    }
+    .lang-option:hover { background: rgba(255,255,255,0.07); color: #fff; }
+    .lang-option.active { color: var(--primary); background: rgba(245,166,35,0.1); }
+    .lang-option .lang-flag { font-size: 18px; line-height: 1; }
+    .lang-option .lang-name { flex: 1; }
+    .lang-option .lang-native { font-size: 11px; opacity: 0.5; }
     .btn-nav-outline { padding: 9px 20px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,0.3); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; background: transparent; text-decoration: none; transition: all 0.2s; }
     .btn-nav-outline:hover { border-color: var(--primary); color: var(--primary); }
     .btn-nav-primary { padding: 9px 22px; border-radius: 10px; background: var(--primary); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; transition: all 0.2s; }
@@ -432,8 +469,42 @@
     <a href="/design">Design</a>
   </div>
   <div class="nav-cta">
-    <a href="/drivers" class="btn-nav-outline">Drive with us</a>
-    <a href="#passengers" class="btn-nav-primary">Book a Bajaj</a>
+    <!-- Language Switcher -->
+    <div class="lang-switcher" id="langSwitcher">
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()" aria-label="Select language">
+        <span class="globe">🌐</span>
+        <span id="langBtnLabel">English</span>
+        <span class="chevron">▼</span>
+      </button>
+      <div class="lang-dropdown" id="langDropdown">
+        <div class="lang-option active" data-lang="en" onclick="setLang('en')">
+          <span class="lang-flag">🇬🇧</span>
+          <span class="lang-name">English</span>
+        </div>
+        <div class="lang-option" data-lang="am" onclick="setLang('am')">
+          <span class="lang-flag">🇪🇹</span>
+          <span class="lang-name">አማርኛ</span>
+          <span class="lang-native">Amharic</span>
+        </div>
+        <div class="lang-option" data-lang="or" onclick="setLang('or')">
+          <span class="lang-flag">🇪🇹</span>
+          <span class="lang-name">Afaan Oromoo</span>
+          <span class="lang-native">Oromo</span>
+        </div>
+        <div class="lang-option" data-lang="ti" onclick="setLang('ti')">
+          <span class="lang-flag">🇪🇹</span>
+          <span class="lang-name">ትግርኛ</span>
+          <span class="lang-native">Tigrinya</span>
+        </div>
+        <div class="lang-option" data-lang="si" onclick="setLang('si')">
+          <span class="lang-flag">🇪🇹</span>
+          <span class="lang-name">Sidaamu Afoo</span>
+          <span class="lang-native">Sidama</span>
+        </div>
+      </div>
+    </div>
+    <a href="/drivers" class="btn-nav-outline" data-i18n="nav_drive">Drive with us</a>
+    <a href="#passengers" class="btn-nav-primary" data-i18n="nav_book">Book a Bajaj</a>
   </div>
   <button class="mobile-menu-btn">☰</button>
 </nav>
@@ -750,7 +821,7 @@
             <div><div class="benefit-title">Work whenever you want</div><div class="benefit-desc">Go online and offline freely. You're your own boss.</div></div>
           </div>
         </div>
-        <a href="/drivers" class="btn-cta btn-cta-primary">🛺 Join Driver Waitlist — Free</a>
+        <a href="/drivers" class="btn-cta btn-cta-primary" data-i18n="btn_join">🛺 Join Driver Waitlist — Free</a>
       </div>
     </div>
   </div>
@@ -1064,9 +1135,11 @@
       </a>
     </span>
     <div class="footer-lang">
-      <div class="lang-pill active">EN</div>
-      <div class="lang-pill">አማርኛ</div>
-      <div class="lang-pill">Oromoo</div>
+      <div class="lang-pill active" onclick="setLang('en')">EN</div>
+      <div class="lang-pill" onclick="setLang('am')">አማርኛ</div>
+      <div class="lang-pill" onclick="setLang('or')">Oromoo</div>
+      <div class="lang-pill" onclick="setLang('ti')">ትግርኛ</div>
+      <div class="lang-pill" onclick="setLang('si')">Sidama</div>
     </div>
   </div>
 </footer>
@@ -1099,6 +1172,120 @@
     }, 30);
   }
   loadCounter();
+
+  // ── Language switcher ──
+  const TRANSLATIONS = {
+    en: {
+      nav_drive: 'Drive with us', nav_book: 'Book a Bajaj',
+      hero_badge: 'NOW LAUNCHING IN ADDIS ABABA',
+      hero_h1_1: "Ethiopia's Bajaj", hero_h1_2: 'in Your Pocket',
+      hero_p: 'Book a Bajaj in seconds. No haggling, no waiting. Fair prices, safe rides — wherever you are in Addis Ababa.',
+      hero_btn1: 'Join Passenger Waitlist', hero_btn2: 'Drive & Earn',
+      waitlist_title: 'Join the Driver Waitlist',
+      waitlist_sub: 'First 500 drivers get zero commission for 30 days.',
+      form_title: 'Sign Up as a Driver 🛺',
+      form_sub: "Takes less than 2 minutes. We'll contact you when we launch.",
+      btn_join: '🛺 Join Driver Waitlist — Free',
+    },
+    am: {
+      nav_drive: 'ሹፌር ሁን', nav_book: 'ባጃጅ ይዙ',
+      hero_badge: 'አዲስ አበባ ላይ እየጀመርን ነው',
+      hero_h1_1: 'የኢትዮጵያ ባጃጅ', hero_h1_2: 'በእጅዎ',
+      hero_p: 'ባጃጅ በጥቂት ሰኮንዶች ይዙ። ምንም ድርድር የለም፣ ምንም መጠበቅ የለም። ፍትሃዊ ዋጋ፣ ደህንነቱ የተጠበቀ ጉዞ።',
+      hero_btn1: 'ዝርዝር ይቀላቀሉ', hero_btn2: 'ሹፌር ሆነው ያግኙ',
+      waitlist_title: 'የሹፌር ዝርዝር ይቀላቀሉ',
+      waitlist_sub: 'የመጀመሪያዎቹ 500 ሹፌሮች ለ30 ቀናት ምንም ኮሚሽን አይከፍሉም።',
+      form_title: 'እንደ ሹፌር ይመዝገቡ 🛺',
+      form_sub: 'ከ2 ደቂቃ ያነሰ ጊዜ ይወስዳል። ስናስጀምር እናሳውቅዎታለን።',
+      btn_join: '🛺 ለሹፌር ዝርዝር ይቀላቀሉ — ነፃ',
+    },
+    or: {
+      nav_drive: 'Konkolaachii', nav_book: 'Bajaj Qabadhu',
+      hero_badge: 'FINFINNEE KEESSATTI JALQABAA JIRRA',
+      hero_h1_1: 'Bajaj Itoophiyaa', hero_h1_2: 'Harka Keessan',
+      hero_p: 'Daqiiqaa muraasa keessatti bajaj qabadhu. Marii hin jiru, eeguu hin jiru. Gatii qayyabataa, adeemsa nagaa.',
+      hero_btn1: 'Tarree Eegaa Seeni', hero_btn2: 'Konkolaachi Kasaaraa Hin Qabdu',
+      waitlist_title: 'Tarree Konkolaachitootaa Seeni',
+      waitlist_sub: 'Konkolaachitoonni 500 jalqabaa guyyoota 30f komishinii hin kafalan.',
+      form_title: 'Akka Konkolaachitaatti Galmaa\'i 🛺',
+      form_sub: 'Daqiiqaa 2 gadi fudhata. Yeroo jalqabnu si beeksifna.',
+      btn_join: '🛺 Tarree Konkolaachitootaa Seeni — Bilisaan',
+    },
+    ti: {
+      nav_drive: 'ሹፌር ኩን', nav_book: 'ባጃጅ ሓዝ',
+      hero_badge: 'ኣብ ኣዲስ ኣበባ ይጅምር ኣሎ',
+      hero_h1_1: 'ባጃጅ ኢትዮጵያ', hero_h1_2: 'ኣብ ኢድካ',
+      hero_p: 'ኣብ ሒደት ካልኢታት ባጃጅ ሓዝ። ምደላዅ የለን፣ ምጽባይ የለን። ፍትሓዊ ዋጋ፣ ውሑስ ጉዕዞ።',
+      hero_btn1: 'ዝርዝር ተሳተፍ', hero_btn2: 'ሹፌር ኩን ርብሕ',
+      waitlist_title: 'ዝርዝር ሹፌራት ተሳተፍ',
+      waitlist_sub: 'ናይ መጀመርታ 500 ሹፌራት ን30 መዓልታት ኮሚሽን ኣይከፍሉን።',
+      form_title: 'ከም ሹፌር ምዝገባ 🛺',
+      form_sub: 'ካብ 2 ደቒቓ ኣይሓልፍን። ክንጅምር እንከሎና ክንሕብረካ ኢና።',
+      btn_join: '🛺 ዝርዝር ሹፌራት ተሳተፍ — ብነጻ',
+    },
+    si: {
+      nav_drive: 'Xaphooshshu', nav_book: 'Bajaj Qari',
+      hero_badge: 'FINFINNETE JALQABISSOOMMO',
+      hero_h1_1: 'Itiyoophiyaa Bajaj', hero_h1_2: 'Niinke Giddo',
+      hero_p: 'Bajaj daqiiqaancho qari. Macciishshu dino, hagiirro dino. Gatete kaaʼo, xaphooshshu nooʼo.',
+      hero_btn1: 'Xiinxalte Seenso', hero_btn2: 'Xaphooshshu Roorrisso',
+      waitlist_title: 'Xaphooshshannote Xiinxalte Seenso',
+      waitlist_sub: 'Xaphooshshannori 500 jalatteenni barra 30nni komishinni hagiirrittooti.',
+      form_title: 'Xaphooshsho Giddo Galmaaʼi 🛺',
+      form_sub: 'Daqiiqaa 2 aana wori. Jalqabbinoonke uulla ninna huwatinoommo.',
+      btn_join: '🛺 Xaphooshshannote Xiinxalte Seenso — Shaqqadaakki',
+    },
+  };
+
+  const LANG_LABELS = { en: 'English', am: 'አማርኛ', or: 'Oromoo', ti: 'ትግርኛ', si: 'Sidama' };
+  let currentLang = localStorage.getItem('bjg_lang') || 'en';
+
+  function toggleLang() {
+    const btn = document.getElementById('langBtn');
+    const dd  = document.getElementById('langDropdown');
+    btn.classList.toggle('open');
+    dd.classList.toggle('open');
+  }
+
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('bjg_lang', lang);
+
+    // Update button label
+    document.getElementById('langBtnLabel').textContent = LANG_LABELS[lang];
+
+    // Update nav active state
+    document.querySelectorAll('.lang-option').forEach(el => {
+      el.classList.toggle('active', el.dataset.lang === lang);
+    });
+
+    // Update footer pills
+    const pills = document.querySelectorAll('.lang-pill');
+    const pillMap = { en: 0, am: 1, or: 2, ti: 3, si: 4 };
+    pills.forEach((p, i) => p.classList.toggle('active', i === pillMap[lang]));
+
+    // Translate all [data-i18n] elements
+    const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (t[key]) el.textContent = t[key];
+    });
+
+    // Close dropdown
+    document.getElementById('langBtn').classList.remove('open');
+    document.getElementById('langDropdown').classList.remove('open');
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', e => {
+    if (!document.getElementById('langSwitcher').contains(e.target)) {
+      document.getElementById('langBtn').classList.remove('open');
+      document.getElementById('langDropdown').classList.remove('open');
+    }
+  });
+
+  // Apply saved language on load
+  if (currentLang !== 'en') setLang(currentLang);
 
   // ── Scroll reveal ──
   const observer = new IntersectionObserver(entries => {
