@@ -232,6 +232,10 @@ app.get('/admin',    (req, res) => res.sendFile(path.join(__dirname, 'public', '
 app.get('/dashboard',(req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/design',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'design.html')));
 
+// ── Operations admin (Vite SPA) ───────────────────────────────────
+app.use('/ops', express.static(path.join(__dirname, 'public', 'ops')));
+app.get('/ops/*',    (req, res) => res.sendFile(path.join(__dirname, 'public', 'ops', 'index.html')));
+
 dbReady().then(ok => {
   if (ok) console.log('[DB] Waitlist table ready');
   else    console.warn('[DB] No DATABASE_URL — waitlist will return empty data');
