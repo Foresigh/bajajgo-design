@@ -4,6 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BajajGo — Drive & Earn More</title>
+  <meta name="description" id="metaDesc" content="Join the BajajGo driver waitlist. More rides, more earnings and zero commission for your first 30 days — Ethiopia's first Bajaj hailing app."/>
+  <script>
+    // Hide the page until the saved (non-English) language is applied, to avoid a flash of English.
+    (function () {
+      try {
+        var l = localStorage.getItem('bjg_lang');
+        if (l && l !== 'en') {
+          document.documentElement.className += ' i18n-pending';
+          setTimeout(function () { document.documentElement.classList.remove('i18n-pending'); }, 1500);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --primary: #F5A623;
@@ -15,9 +30,10 @@
       --border: #E0E6EF;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html.i18n-pending body { visibility: hidden; }
 
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', 'Noto Sans Ethiopic', 'Nyala', 'Ebrima', system-ui, sans-serif;
       background: var(--bg);
       color: var(--secondary);
     }
@@ -65,10 +81,11 @@
     }
     .lang-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
     .lang-option {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 9px; cursor: pointer;
-      transition: background 0.15s; color: rgba(255,255,255,0.75);
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 10px 12px; border-radius: 9px; cursor: pointer; border: none; background: transparent;
+      transition: background 0.15s; color: rgba(255,255,255,0.75); text-align: left; font-family: inherit;
       font-size: 13px; font-weight: 500;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     }
     .lang-option:hover { background: rgba(255,255,255,0.07); color: #fff; }
     .lang-option.active { color: var(--primary); background: rgba(245,166,35,0.1); }
@@ -444,6 +461,14 @@
     }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+    footer .footer-langs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+    .lang-pill { padding: 4px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: rgba(255,255,255,0.45); font-size: 12px; cursor: pointer; background: transparent; font-family: inherit; touch-action: manipulation; }
+    .lang-pill.active { border-color: var(--primary); color: var(--primary); }
+    @media (max-width: 420px) {
+      nav { padding: 14px 16px; }
+      .nav-right { gap: 8px; }
+      .nav-right .nav-join { display: none; }
+    }
     @media (max-width: 480px) {
       .form-row { grid-template-columns: 1fr; }
       .form-card { padding: 28px 20px; }
@@ -456,52 +481,50 @@
 
 <!-- NAV -->
 <nav>
-  <div class="logo">Bajaj<span>Go</span> 🛺</div>
+  <a href="/" class="logo" style="text-decoration:none" translate="no">Bajaj<span>Go</span> 🛺</a>
   <div class="nav-right">
     <div class="lang-switcher" id="langSwitcher">
-      <button class="lang-btn" id="langBtn" onclick="toggleLang()">
-        🌐 <span id="langBtnLabel">English</span> <span class="chevron">▼</span>
+      <button type="button" class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langDropdown" aria-label="Select language" data-i18n-aria="aria_lang">
+        <span aria-hidden="true">🌐</span> <span id="langBtnLabel" translate="no">English</span> <span class="chevron" aria-hidden="true">▼</span>
       </button>
-      <div class="lang-dropdown" id="langDropdown">
-        <div class="lang-option active" data-lang="en" onclick="setLang('en')">🇬🇧 English</div>
-        <div class="lang-option" data-lang="am" onclick="setLang('am')">🇪🇹 አማርኛ <span class="lang-native">Amharic</span></div>
-        <div class="lang-option" data-lang="or" onclick="setLang('or')">🇪🇹 Afaan Oromoo <span class="lang-native">Oromo</span></div>
-        <div class="lang-option" data-lang="ti" onclick="setLang('ti')">🇪🇹 ትግርኛ <span class="lang-native">Tigrinya</span></div>
-        <div class="lang-option" data-lang="si" onclick="setLang('si')">🇪🇹 Sidaamu Afoo <span class="lang-native">Sidama</span></div>
+      <div class="lang-dropdown" id="langDropdown" role="menu" translate="no">
+        <button type="button" role="menuitemradio" class="lang-option active" data-lang="en" lang="en">🇬🇧 English</button>
+        <button type="button" role="menuitemradio" class="lang-option" data-lang="am" lang="am">🇪🇹 አማርኛ <span class="lang-native">Amharic</span></button>
+        <button type="button" role="menuitemradio" class="lang-option" data-lang="or" lang="om">🇪🇹 Afaan Oromoo <span class="lang-native">Oromo</span></button>
+        <button type="button" role="menuitemradio" class="lang-option" data-lang="ti" lang="ti">🇪🇹 ትግርኛ <span class="lang-native">Tigrinya</span></button>
+        <button type="button" role="menuitemradio" class="lang-option" data-lang="si" lang="sid">🇪🇹 Sidaamu Afoo <span class="lang-native">Sidama</span></button>
       </div>
     </div>
-    <a href="#signup" data-i18n="nav_join">Join Waitlist →</a>
+    <a href="#signup" class="nav-join" data-i18n="nav_join">Join Waitlist →</a>
   </div>
 </nav>
 
 <!-- COUNTER BANNER -->
 <div class="counter-banner">
-  <p>🔥 <span id="counter">0</span> drivers have joined the waitlist — be among the first!</p>
+  <p>🔥 <span id="counter">0</span> <span data-i18n="counter_text">drivers have joined the waitlist — be among the first!</span></p>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-content">
-    <div class="hero-badge">🇪🇹 Coming to Ethiopia</div>
-    <span class="hero-bajaj">🛺</span>
-    <h1>Drive More.<br/><span>Earn More.</span><br/>With BajajGo.</h1>
-    <p>Ethiopia's first dedicated Bajaj hailing app is coming.<br/>
+    <div class="hero-badge" data-i18n="hero_badge">🇪🇹 Coming to Ethiopia</div>
+    <span class="hero-bajaj" aria-hidden="true">🛺</span>
+    <h1 data-i18n-html="hero_h1">Drive More.<br/><span>Earn More.</span><br/>With BajajGo.</h1>
+    <p data-i18n-html="hero_p">Ethiopia's first dedicated Bajaj hailing app is coming.<br/>
     No more waiting for passengers. Rides come to you.</p>
-    <a href="#signup" style="display:inline-block;background:var(--primary);color:#fff;padding:16px 40px;border-radius:14px;font-size:17px;font-weight:800;text-decoration:none;box-shadow:0 8px 30px rgba(245,166,35,0.4)">
-      Join Driver Waitlist — Free
-    </a>
+    <a href="#signup" style="display:inline-block;background:var(--primary);color:#fff;padding:16px 40px;border-radius:14px;font-size:17px;font-weight:800;text-decoration:none;box-shadow:0 8px 30px rgba(245,166,35,0.4)" data-i18n="hero_cta">Join Driver Waitlist — Free</a>
     <div class="hero-stats">
       <div class="hero-stat">
-        <div class="hero-stat-val">ETB 0</div>
-        <div class="hero-stat-lbl">Commission for first month</div>
+        <div class="hero-stat-val" translate="no">ETB 0</div>
+        <div class="hero-stat-lbl" data-i18n="stat_commission">Commission for first month</div>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-val">2,000+</div>
-        <div class="hero-stat-lbl">ETB/week potential</div>
+        <div class="hero-stat-lbl" data-i18n="stat_week">ETB/week potential</div>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-val">100%</div>
-        <div class="hero-stat-lbl">Your schedule</div>
+        <div class="hero-stat-lbl" data-i18n="stat_schedule">Your schedule</div>
       </div>
     </div>
   </div>
@@ -509,110 +532,110 @@
 
 <!-- BENEFITS -->
 <section class="benefits">
-  <div class="section-tag">Why BajajGo</div>
-  <div class="section-title">Built for Bajaj Drivers</div>
-  <div class="section-sub">Everything designed around how you actually work.</div>
+  <div class="section-tag" data-i18n="why_tag">Why BajajGo</div>
+  <div class="section-title" data-i18n="why_title">Built for Bajaj Drivers</div>
+  <div class="section-sub" data-i18n="why_sub">Everything designed around how you actually work.</div>
 
   <div class="benefits-grid">
     <div class="benefit-card fade-in">
       <span class="benefit-icon">💰</span>
-      <div class="benefit-title">Earn More Per Day</div>
-      <div class="benefit-desc">Rides come to you — no more wasted time waiting at stands or haggling prices. More trips = more birr.</div>
+      <div class="benefit-title" data-i18n="b1_title">Earn More Per Day</div>
+      <div class="benefit-desc" data-i18n="b1_desc">Rides come to you — no more wasted time waiting at stands or haggling prices. More trips = more birr.</div>
     </div>
     <div class="benefit-card fade-in">
       <span class="benefit-icon">🗺</span>
-      <div class="benefit-title">Built-in Navigation</div>
-      <div class="benefit-desc">Turn-by-turn directions straight to the passenger and destination. No confusion, no wrong turns.</div>
+      <div class="benefit-title" data-i18n="b2_title">Built-in Navigation</div>
+      <div class="benefit-desc" data-i18n="b2_desc">Turn-by-turn directions straight to the passenger and destination. No confusion, no wrong turns.</div>
     </div>
     <div class="benefit-card fade-in">
       <span class="benefit-icon">💵</span>
-      <div class="benefit-title">Cash Always Accepted</div>
-      <div class="benefit-desc">Cash, Telebirr, CBE Birr — your passengers pay however they want. You still get paid instantly.</div>
+      <div class="benefit-title" data-i18n="b3_title">Cash Always Accepted</div>
+      <div class="benefit-desc" data-i18n="b3_desc">Cash, Telebirr, CBE Birr — your passengers pay however they want. You still get paid instantly.</div>
     </div>
     <div class="benefit-card fade-in">
       <span class="benefit-icon">⭐</span>
-      <div class="benefit-title">Build Your Reputation</div>
-      <div class="benefit-desc">High-rated drivers get more rides. Your rating follows you — great service pays off directly.</div>
+      <div class="benefit-title" data-i18n="b4_title">Build Your Reputation</div>
+      <div class="benefit-desc" data-i18n="b4_desc">High-rated drivers get more rides. Your rating follows you — great service pays off directly.</div>
     </div>
     <div class="benefit-card fade-in">
       <span class="benefit-icon">🕐</span>
-      <div class="benefit-title">Work Your Own Hours</div>
-      <div class="benefit-desc">Go online when you want, go offline when you need a break. You are your own boss.</div>
+      <div class="benefit-title" data-i18n="b5_title">Work Your Own Hours</div>
+      <div class="benefit-desc" data-i18n="b5_desc">Go online when you want, go offline when you need a break. You are your own boss.</div>
     </div>
     <div class="benefit-card fade-in">
       <span class="benefit-icon">🛡</span>
-      <div class="benefit-title">Safety &amp; Support</div>
-      <div class="benefit-desc">SOS button, trip insurance, and 24/7 driver support. You're never alone on the road.</div>
+      <div class="benefit-title" data-i18n="b6_title">Safety &amp; Support</div>
+      <div class="benefit-desc" data-i18n="b6_desc">SOS button, trip insurance, and 24/7 driver support. You're never alone on the road.</div>
     </div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
 <section class="how">
-  <div class="section-tag" style="background:rgba(245,166,35,0.2);color:var(--primary)">How It Works</div>
-  <div class="section-title" style="margin-top:8px">Simple as 4 Steps</div>
-  <div class="section-sub">Get started in minutes. Earn from day one.</div>
+  <div class="section-tag" style="background:rgba(245,166,35,0.2);color:var(--primary)" data-i18n="how_tag">How It Works</div>
+  <div class="section-title" style="margin-top:8px" data-i18n="how_title">Simple as 4 Steps</div>
+  <div class="section-sub" data-i18n="how_sub">Get started in minutes. Earn from day one.</div>
   <div class="steps">
     <div class="step fade-in">
       <div class="step-num">1</div>
       <div class="step-icon">📝</div>
-      <div class="step-title">Register</div>
-      <div class="step-desc">Sign up with your phone, license &amp; plate</div>
+      <div class="step-title" data-i18n="s1_title">Register</div>
+      <div class="step-desc" data-i18n="s1_desc">Sign up with your phone, license &amp; plate</div>
     </div>
     <div class="step fade-in">
       <div class="step-num">2</div>
       <div class="step-icon">✅</div>
-      <div class="step-title">Get Approved</div>
-      <div class="step-desc">Verified within 24 hours</div>
+      <div class="step-title" data-i18n="s2_title">Get Approved</div>
+      <div class="step-desc" data-i18n="s2_desc">Verified within 24 hours</div>
     </div>
     <div class="step fade-in">
       <div class="step-num">3</div>
       <div class="step-icon">🟢</div>
-      <div class="step-title">Go Online</div>
-      <div class="step-desc">Tap online and start receiving rides</div>
+      <div class="step-title" data-i18n="s3_title">Go Online</div>
+      <div class="step-desc" data-i18n="s3_desc">Tap online and start receiving rides</div>
     </div>
     <div class="step fade-in">
       <div class="step-num">4</div>
       <div class="step-icon">💰</div>
-      <div class="step-title">Earn</div>
-      <div class="step-desc">Get paid after every trip</div>
+      <div class="step-title" data-i18n="s4_title">Earn</div>
+      <div class="step-desc" data-i18n="s4_desc">Get paid after every trip</div>
     </div>
   </div>
 </section>
 
 <!-- EARNINGS CALCULATOR -->
 <section class="earnings">
-  <div class="section-tag">Earnings Calculator</div>
-  <div class="section-title">How Much Can You Make?</div>
-  <div class="section-sub">Estimate your weekly earnings on BajajGo</div>
+  <div class="section-tag" data-i18n="calc_tag">Earnings Calculator</div>
+  <div class="section-title" data-i18n="calc_title">How Much Can You Make?</div>
+  <div class="section-sub" data-i18n="calc_sub">Estimate your weekly earnings on BajajGo</div>
   <div class="calc-card fade-in">
     <div class="slider-wrap">
-      <div class="slider-label"><span>Trips per day</span><span id="trips-val">8 trips</span></div>
-      <input type="range" id="trips-slider" min="2" max="20" value="8" oninput="calcEarnings()">
+      <div class="slider-label"><span data-i18n="calc_trips">Trips per day</span><span id="trips-val" data-i18n="trips_n" data-i18n-vars='{"n":8}'>8 trips</span></div>
+      <input type="range" id="trips-slider" min="2" max="20" value="8" aria-label="Trips per day" data-i18n-aria="calc_trips">
     </div>
     <div class="slider-wrap">
-      <div class="slider-label"><span>Average fare per trip</span><span id="fare-val">ETB 35</span></div>
-      <input type="range" id="fare-slider" min="20" max="80" value="35" oninput="calcEarnings()">
+      <div class="slider-label"><span data-i18n="calc_fare">Average fare per trip</span><span id="fare-val" translate="no">ETB 35</span></div>
+      <input type="range" id="fare-slider" min="20" max="80" value="35" aria-label="Average fare per trip" data-i18n-aria="calc_fare">
     </div>
     <div class="slider-wrap">
-      <div class="slider-label"><span>Days per week</span><span id="days-val">6 days</span></div>
-      <input type="range" id="days-slider" min="1" max="7" value="6" oninput="calcEarnings()">
+      <div class="slider-label"><span data-i18n="calc_days">Days per week</span><span id="days-val" data-i18n="days_n" data-i18n-vars='{"n":6}'>6 days</span></div>
+      <input type="range" id="days-slider" min="1" max="7" value="6" aria-label="Days per week" data-i18n-aria="calc_days">
     </div>
     <div class="earnings-result">
-      <div class="earnings-result-val" id="weekly-earn">ETB 1,680</div>
-      <div class="earnings-result-lbl">Estimated weekly earnings</div>
+      <div class="earnings-result-val" id="weekly-earn" translate="no">ETB 1,680</div>
+      <div class="earnings-result-lbl" data-i18n="calc_weekly">Estimated weekly earnings</div>
       <div class="earnings-breakdown">
         <div class="earn-item">
-          <div class="earn-val" id="daily-earn">ETB 280</div>
-          <div class="earn-lbl">Per day</div>
+          <div class="earn-val" id="daily-earn" translate="no">ETB 280</div>
+          <div class="earn-lbl" data-i18n="calc_per_day">Per day</div>
         </div>
         <div class="earn-item">
-          <div class="earn-val" id="monthly-earn">ETB 7,280</div>
-          <div class="earn-lbl">Per month</div>
+          <div class="earn-val" id="monthly-earn" translate="no">ETB 7,280</div>
+          <div class="earn-lbl" data-i18n="calc_per_month">Per month</div>
         </div>
         <div class="earn-item">
-          <div class="earn-val" id="commission-val">ETB 0</div>
-          <div class="earn-lbl">Commission (first month)</div>
+          <div class="earn-val" id="commission-val" translate="no">ETB 0</div>
+          <div class="earn-lbl" data-i18n="calc_commission">Commission (first month)</div>
         </div>
       </div>
     </div>
@@ -623,9 +646,9 @@
 <section id="signup">
   <div class="form-wrap">
     <div style="text-align:center;margin-bottom:32px">
-      <div class="section-tag">Early Access</div>
+      <div class="section-tag" data-i18n="early_tag">Early Access</div>
       <div class="section-title" data-i18n="waitlist_title">Join the Driver Waitlist</div>
-      <div class="section-sub" data-i18n="waitlist_sub">First 500 drivers get <strong style="color:var(--primary)">zero commission for 30 days</strong>.</div>
+      <div class="section-sub" data-i18n-html="waitlist_sub">First 500 drivers get <strong style="color:var(--primary)">zero commission for 30 days</strong>.</div>
     </div>
 
     <div class="form-card">
@@ -639,62 +662,62 @@
         <form id="waitlist-form">
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label" data-i18n="lbl_first_name">First Name</label>
-              <input class="form-input" type="text" name="firstName" placeholder="Tadesse" required />
+              <label class="form-label" for="f-first" data-i18n="lbl_first_name">First Name</label>
+              <input class="form-input" id="f-first" type="text" name="firstName" placeholder="Tadesse" translate="no" required />
             </div>
             <div class="form-group">
-              <label class="form-label" data-i18n="lbl_last_name">Last Name</label>
-              <input class="form-input" type="text" name="lastName" placeholder="Bekele" required />
+              <label class="form-label" for="f-last" data-i18n="lbl_last_name">Last Name</label>
+              <input class="form-input" id="f-last" type="text" name="lastName" placeholder="Bekele" translate="no" required />
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" data-i18n="lbl_phone">Phone Number</label>
+            <label class="form-label" for="f-phone" data-i18n="lbl_phone">Phone Number</label>
             <div style="display:flex;gap:8px">
-              <select class="form-select" style="width:90px">
+              <select class="form-select" style="width:90px" aria-label="Country code" data-i18n-aria="aria_country_code" translate="no">
                 <option>+251</option>
               </select>
-              <input class="form-input" type="tel" name="phone" placeholder="91 234 5678" required
+              <input class="form-input" id="f-phone" type="tel" name="phone" placeholder="91 234 5678" required
                 style="flex:1" maxlength="12" />
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" data-i18n="lbl_city">City</label>
-            <select class="form-select" name="city" required>
+            <label class="form-label" for="f-city" data-i18n="lbl_city">City</label>
+            <select class="form-select" id="f-city" name="city" required>
               <option value="" disabled selected data-i18n="placeholder_city">Select your city</option>
-              <option>Addis Ababa</option>
-              <option>Bahir Dar</option>
-              <option>Gondar</option>
-              <option>Hawassa</option>
-              <option>Mekelle</option>
-              <option>Dire Dawa</option>
-              <option>Jimma</option>
-              <option>Adama (Nazret)</option>
-              <option>Other</option>
+              <option value="Addis Ababa" data-i18n="city_addis">Addis Ababa</option>
+              <option value="Bahir Dar" data-i18n="city_bahirdar">Bahir Dar</option>
+              <option value="Gondar" data-i18n="city_gondar">Gondar</option>
+              <option value="Hawassa" data-i18n="city_hawassa">Hawassa</option>
+              <option value="Mekelle" data-i18n="city_mekelle">Mekelle</option>
+              <option value="Dire Dawa" data-i18n="city_diredawa">Dire Dawa</option>
+              <option value="Jimma" data-i18n="city_jimma">Jimma</option>
+              <option value="Adama (Nazret)" data-i18n="city_adama">Adama (Nazret)</option>
+              <option value="Other" data-i18n="city_other">Other</option>
             </select>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label" data-i18n="lbl_plate">Vehicle Plate</label>
-              <input class="form-input" type="text" name="plate" placeholder="AA 3 45678" />
+              <label class="form-label" for="f-plate" data-i18n="lbl_plate">Vehicle Plate</label>
+              <input class="form-input" id="f-plate" type="text" name="plate" placeholder="AA 3 45678" translate="no" />
             </div>
             <div class="form-group">
-              <label class="form-label" data-i18n="lbl_experience">Years Driving Bajaj</label>
-              <select class="form-select" name="experience">
+              <label class="form-label" for="f-exp" data-i18n="lbl_experience">Years Driving Bajaj</label>
+              <select class="form-select" id="f-exp" name="experience">
                 <option value="" disabled selected data-i18n="placeholder_select">Select</option>
-                <option>Less than 1 year</option>
-                <option>1–2 years</option>
-                <option>3–5 years</option>
-                <option>5+ years</option>
+                <option value="Less than 1 year" data-i18n="exp_lt1">Less than 1 year</option>
+                <option value="1–2 years" data-i18n="exp_1_2">1–2 years</option>
+                <option value="3–5 years" data-i18n="exp_3_5">3–5 years</option>
+                <option value="5+ years" data-i18n="exp_5p">5+ years</option>
               </select>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" data-i18n="lbl_ownership">Do you own your Bajaj?</label>
-            <div class="checkbox-group">
+            <div class="form-label" id="lbl-ownership" data-i18n="lbl_ownership">Do you own your Bajaj?</div>
+            <div class="checkbox-group" role="radiogroup" aria-labelledby="lbl-ownership">
               <label class="checkbox-item">
                 <input type="radio" name="ownership" value="owner" required /> <span data-i18n="own_yes">Yes, I own my Bajaj</span>
               </label>
@@ -705,8 +728,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" data-i18n="lbl_smartphone">Do you have a smartphone?</label>
-            <div class="checkbox-group">
+            <div class="form-label" id="lbl-smartphone" data-i18n="lbl_smartphone">Do you have a smartphone?</div>
+            <div class="checkbox-group" role="radiogroup" aria-labelledby="lbl-smartphone">
               <label class="checkbox-item">
                 <input type="radio" name="smartphone" value="yes" required /> <span data-i18n="phone_android">Yes, Android</span>
               </label>
@@ -719,26 +742,24 @@
             </div>
           </div>
 
-          <div id="form-error" style="display:none;background:#FDECEC;border:1px solid #E74C3C;border-radius:10px;padding:10px 14px;color:#C0392B;font-size:13px;margin-bottom:12px"></div>
+          <div id="form-error" role="alert" style="display:none;background:#FDECEC;border:1px solid #E74C3C;border-radius:10px;padding:10px 14px;color:#C0392B;font-size:13px;margin-bottom:12px"></div>
 
-          <button type="submit" class="submit-btn" id="submit-btn" data-i18n="btn_join">
-            🛺 Join Driver Waitlist — Free
-          </button>
+          <button type="submit" class="submit-btn" id="submit-btn" data-i18n="btn_join">🛺 Join Driver Waitlist — Free</button>
           <div class="form-note" data-i18n="form_note">🔒 Your info is private. No spam. We'll only contact you about BajajGo launch.</div>
         </form>
       </div>
 
       <!-- SUCCESS STATE -->
-      <div class="success-state" id="success-section">
+      <div class="success-state" id="success-section" role="status" aria-live="polite">
         <div class="success-icon">🎉</div>
-        <h3>You're on the list!</h3>
-        <div class="success-number" id="success-position">#1 on the list</div>
-        <p>Thank you for joining the BajajGo driver waitlist.<br/>
-        We'll send you a message on <strong id="success-phone"></strong> when we launch in your city.<br/><br/>
-        <strong style="color:var(--primary)">First 500 drivers get zero commission for 30 days.</strong></p>
-        <div style="margin-top:24px;padding:16px;background:#F5F7FA;border-radius:14px;font-size:14px;color:var(--muted)">
-          Share with other Bajaj drivers and move up the list 📢
-        </div>
+        <h3 data-i18n="success_title">You're on the list!</h3>
+        <div class="success-number" id="success-position" data-i18n="success_pos" data-i18n-vars='{"n":1}'>#1 on the list</div>
+        <p>
+          <span data-i18n="success_thanks">Thank you for joining the BajajGo driver waitlist.</span><br/>
+          <span id="success-msg" data-i18n-html="success_msg" data-i18n-vars='{"phone":""}'>We'll send you a message on <strong></strong> when we launch in your city.</span><br/><br/>
+          <strong style="color:var(--primary)" data-i18n="success_promo">First 500 drivers get zero commission for 30 days.</strong>
+        </p>
+        <div style="margin-top:24px;padding:16px;background:#F5F7FA;border-radius:14px;font-size:14px;color:var(--muted)" data-i18n="success_share">Share with other Bajaj drivers and move up the list 📢</div>
       </div>
     </div>
   </div>
@@ -746,35 +767,420 @@
 
 <!-- FOOTER -->
 <footer>
-  <strong>BajajGo</strong> — Three-Wheel Vehicle Hailing for Ethiopia<br/>
-  <span style="font-size:12px;margin-top:6px;display:block">© 2026 BajajGo · All rights reserved</span>
+  <strong translate="no">BajajGo</strong> <span data-i18n="footer_tagline">— Three-Wheel Vehicle Hailing for Ethiopia</span><br/>
+  <span style="font-size:12px;margin-top:6px;display:block" data-i18n="footer_rights">© 2026 BajajGo · All rights reserved</span>
   <span style="font-size:12px;margin-top:4px;display:block;opacity:0.6">
-    Designed & Built by <a href="https://gorevamp.ai" target="_blank" rel="noopener"
+    <span data-i18n="footer_built">Designed &amp; Built by</span> <a href="https://gorevamp.ai" target="_blank" rel="noopener" translate="no"
       style="color:var(--primary);text-decoration:none;font-weight:600">Revamp Digital LLC</a>
   </span>
+  <div class="footer-langs" translate="no">
+    <button type="button" class="lang-pill active" data-lang="en" lang="en">EN</button>
+    <button type="button" class="lang-pill" data-lang="am" lang="am">አማርኛ</button>
+    <button type="button" class="lang-pill" data-lang="or" lang="om">Oromoo</button>
+    <button type="button" class="lang-pill" data-lang="ti" lang="ti">ትግርኛ</button>
+    <button type="button" class="lang-pill" data-lang="si" lang="sid">Sidama</button>
+  </div>
 </footer>
 
 <script>
+  // ── Language data ──────────────────────────────────────────────
+  // Every user-visible string is tagged in the HTML with one of:
+  //   data-i18n / data-i18n-html / data-i18n-placeholder / data-i18n-aria / data-i18n-alt
+  //   data-i18n-vars='{"n":3}' supplies values for {n} placeholders.
+  // Strings built in JS use t(key, vars). Brand names, numbers and example
+  // values that intentionally stay as-is are marked translate="no".
+  const TRANSLATIONS = {
+    en: {
+      meta_title: 'BajajGo — Drive & Earn More',
+      meta_desc: "Join the BajajGo driver waitlist. More rides, more earnings and zero commission for your first 30 days — Ethiopia's first Bajaj hailing app.",
+      aria_lang: 'Select language', nav_join: 'Join Waitlist →',
+      counter_text: 'drivers have joined the waitlist — be among the first!',
+      hero_badge: '🇪🇹 Coming to Ethiopia',
+      hero_h1: 'Drive More.<br/><span>Earn More.</span><br/>With BajajGo.',
+      hero_p: "Ethiopia's first dedicated Bajaj hailing app is coming.<br/>No more waiting for passengers. Rides come to you.",
+      hero_cta: 'Join Driver Waitlist — Free',
+      stat_commission: 'Commission for first month', stat_week: 'ETB/week potential', stat_schedule: 'Your schedule',
+      why_tag: 'Why BajajGo', why_title: 'Built for Bajaj Drivers', why_sub: 'Everything designed around how you actually work.',
+      b1_title: 'Earn More Per Day', b1_desc: 'Rides come to you — no more wasted time waiting at stands or haggling prices. More trips = more birr.',
+      b2_title: 'Built-in Navigation', b2_desc: 'Turn-by-turn directions straight to the passenger and destination. No confusion, no wrong turns.',
+      b3_title: 'Cash Always Accepted', b3_desc: 'Cash, Telebirr, CBE Birr — your passengers pay however they want. You still get paid instantly.',
+      b4_title: 'Build Your Reputation', b4_desc: 'High-rated drivers get more rides. Your rating follows you — great service pays off directly.',
+      b5_title: 'Work Your Own Hours', b5_desc: 'Go online when you want, go offline when you need a break. You are your own boss.',
+      b6_title: 'Safety & Support', b6_desc: "SOS button, trip insurance, and 24/7 driver support. You're never alone on the road.",
+      how_tag: 'How It Works', how_title: 'Simple as 4 Steps', how_sub: 'Get started in minutes. Earn from day one.',
+      s1_title: 'Register', s1_desc: 'Sign up with your phone, license & plate',
+      s2_title: 'Get Approved', s2_desc: 'Verified within 24 hours',
+      s3_title: 'Go Online', s3_desc: 'Tap online and start receiving rides',
+      s4_title: 'Earn', s4_desc: 'Get paid after every trip',
+      calc_tag: 'Earnings Calculator', calc_title: 'How Much Can You Make?', calc_sub: 'Estimate your weekly earnings on BajajGo',
+      calc_trips: 'Trips per day', calc_fare: 'Average fare per trip', calc_days: 'Days per week',
+      trips_n: '{n} trips', days_n: '{n} days', days_1: '{n} day',
+      calc_weekly: 'Estimated weekly earnings', calc_per_day: 'Per day', calc_per_month: 'Per month', calc_commission: 'Commission (first month)',
+      early_tag: 'Early Access',
+      waitlist_title: 'Join the Driver Waitlist',
+      waitlist_sub: 'First 500 drivers get <strong style="color:var(--primary)">zero commission for 30 days</strong>.',
+      form_title: 'Sign Up as a Driver 🛺',
+      form_sub: "Takes less than 2 minutes. We'll contact you when we launch.",
+      lbl_first_name: 'First Name', lbl_last_name: 'Last Name', lbl_phone: 'Phone Number', aria_country_code: 'Country code',
+      lbl_city: 'City', placeholder_city: 'Select your city',
+      city_addis: 'Addis Ababa', city_bahirdar: 'Bahir Dar', city_gondar: 'Gondar', city_hawassa: 'Hawassa', city_mekelle: 'Mekelle',
+      city_diredawa: 'Dire Dawa', city_jimma: 'Jimma', city_adama: 'Adama (Nazret)', city_other: 'Other',
+      lbl_plate: 'Vehicle Plate', lbl_experience: 'Years Driving Bajaj', placeholder_select: 'Select',
+      exp_lt1: 'Less than 1 year', exp_1_2: '1–2 years', exp_3_5: '3–5 years', exp_5p: '5+ years',
+      lbl_ownership: 'Do you own your Bajaj?', own_yes: 'Yes, I own my Bajaj', own_no: 'No, I rent / lease it',
+      lbl_smartphone: 'Do you have a smartphone?', phone_android: 'Yes, Android', phone_ios: 'Yes, iPhone', phone_feature: 'No, feature phone',
+      btn_join: '🛺 Join Driver Waitlist — Free', joining: 'Joining...',
+      form_note: "🔒 Your info is private. No spam. We'll only contact you about BajajGo launch.",
+      err_required: 'Please fill in all required fields.',
+      err_phone: 'Please enter a valid Ethiopian phone number.',
+      err_duplicate: 'This phone number is already on the waitlist.',
+      err_server: 'Could not save your info. Please try again.',
+      err_network: 'Connection problem. Please check your internet and try again.',
+      success_title: "You're on the list!", success_pos: '#{n} on the list',
+      success_thanks: 'Thank you for joining the BajajGo driver waitlist.',
+      success_msg: "We'll send you a message on <strong>{phone}</strong> when we launch in your city.",
+      success_promo: 'First 500 drivers get zero commission for 30 days.',
+      success_share: 'Share with other Bajaj drivers and move up the list 📢',
+      footer_tagline: '— Three-Wheel Vehicle Hailing for Ethiopia',
+      footer_rights: '© 2026 BajajGo · All rights reserved', footer_built: 'Designed & Built by',
+    },
+
+    am: {
+      meta_title: 'BajajGo — ይንዱ፣ የበለጠ ያግኙ',
+      meta_desc: 'የBajajGo ሹፌሮችን የጥበቃ ዝርዝር ይቀላቀሉ። ብዙ ጉዞ፣ ብዙ ገቢ፣ ለመጀመሪያዎቹ 30 ቀናት ምንም ኮሚሽን የለም — የኢትዮጵያ የመጀመሪያው የባጃጅ መጥሪያ መተግበሪያ።',
+      aria_lang: 'ቋንቋ ይምረጡ', nav_join: 'ዝርዝሩን ይቀላቀሉ →',
+      counter_text: 'ሹፌሮች የጥበቃ ዝርዝሩን ተቀላቅለዋል — ከመጀመሪያዎቹ አንዱ ይሁኑ!',
+      hero_badge: '🇪🇹 ወደ ኢትዮጵያ እየመጣ ነው',
+      hero_h1: 'የበለጠ ይንዱ።<br/><span>የበለጠ ያግኙ።</span><br/>ከBajajGo ጋር።',
+      hero_p: 'የኢትዮጵያ የመጀመሪያው የባጃጅ መጥሪያ መተግበሪያ እየመጣ ነው።<br/>ከእንግዲህ ተሳፋሪ መጠበቅ የለም። ጉዞዎች ወደ እርስዎ ይመጣሉ።',
+      hero_cta: 'የሹፌሮችን ዝርዝር ይቀላቀሉ — ነፃ',
+      stat_commission: 'ኮሚሽን በመጀመሪያው ወር', stat_week: 'ብር በሳምንት ሊያገኙ ይችላሉ', stat_schedule: 'የራስዎ ሰዓት',
+      why_tag: 'ለምን BajajGo', why_title: 'ለባጃጅ ሹፌሮች የተሠራ', why_sub: 'ሁሉም ነገር እርስዎ በሚሠሩበት መንገድ ተቀርጿል።',
+      b1_title: 'በቀን የበለጠ ያግኙ', b1_desc: 'ጉዞዎች ወደ እርስዎ ይመጣሉ — ከእንግዲህ ተራ ላይ በመጠበቅ ወይም ዋጋ በመከራከር ጊዜ አይባክንም። ብዙ ጉዞ = ብዙ ብር።',
+      b2_title: 'አብሮ የተሠራ አቅጣጫ መጠቆሚያ', b2_desc: 'ወደ ተሳፋሪውና ወደ መድረሻው ደረጃ በደረጃ የሚመራ አቅጣጫ። ግራ መጋባት የለም፣ መሳሳት የለም።',
+      b3_title: 'ጥሬ ገንዘብ ሁልጊዜ ይቀበላል', b3_desc: 'ጥሬ ገንዘብ፣ Telebirr፣ CBE Birr — ተሳፋሪዎችዎ በፈለጉት መንገድ ይክፈሉ። እርስዎ ግን ክፍያዎን ወዲያውኑ ያገኛሉ።',
+      b4_title: 'መልካም ስምዎን ይገንቡ', b4_desc: 'ከፍተኛ ደረጃ ያላቸው ሹፌሮች ብዙ ጉዞ ያገኛሉ። ደረጃዎ አብሮዎት ይጓዛል — ጥሩ አገልግሎት በቀጥታ ይከፍላል።',
+      b5_title: 'በራስዎ ሰዓት ይሥሩ', b5_desc: 'በፈለጉ ጊዜ መስመር ላይ ይግቡ፣ እረፍት ሲፈልጉ ይውጡ። የራስዎ አለቃ እርስዎ ነዎት።',
+      b6_title: 'ደህንነትና ድጋፍ', b6_desc: 'የSOS ቁልፍ፣ የጉዞ ኢንሹራንስ እና የ24/7 የሹፌር ድጋፍ። በመንገድ ላይ ብቻዎን አይደሉም።',
+      how_tag: 'እንዴት ይሠራል', how_title: 'በ4 ቀላል ደረጃዎች', how_sub: 'በደቂቃዎች ይጀምሩ። ከመጀመሪያው ቀን ጀምሮ ያግኙ።',
+      s1_title: 'ይመዝገቡ', s1_desc: 'በስልክዎ፣ በመንጃ ፈቃድዎ እና በታርጋዎ ይመዝገቡ',
+      s2_title: 'ይጸድቁ', s2_desc: 'በ24 ሰዓት ውስጥ ይረጋገጣል',
+      s3_title: 'መስመር ላይ ይግቡ', s3_desc: '"መስመር ላይ" የሚለውን ይጫኑና ጉዞዎችን መቀበል ይጀምሩ',
+      s4_title: 'ያግኙ', s4_desc: 'ከእያንዳንዱ ጉዞ በኋላ ክፍያዎን ያግኙ',
+      calc_tag: 'የገቢ ማስያ', calc_title: 'ምን ያህል ሊያገኙ ይችላሉ?', calc_sub: 'በBajajGo ሳምንታዊ ገቢዎን ይገምቱ',
+      calc_trips: 'ጉዞዎች በቀን', calc_fare: 'አማካይ ዋጋ በጉዞ', calc_days: 'ቀናት በሳምንት',
+      trips_n: '{n} ጉዞዎች', days_n: '{n} ቀናት', days_1: '{n} ቀን',
+      calc_weekly: 'የሚገመት ሳምንታዊ ገቢ', calc_per_day: 'በቀን', calc_per_month: 'በወር', calc_commission: 'ኮሚሽን (የመጀመሪያው ወር)',
+      early_tag: 'ቀድሞ መግቢያ',
+      waitlist_title: 'የሹፌሮችን የጥበቃ ዝርዝር ይቀላቀሉ',
+      waitlist_sub: 'የመጀመሪያዎቹ 500 ሹፌሮች <strong style="color:var(--primary)">ለ30 ቀናት ምንም ኮሚሽን አይከፍሉም</strong>።',
+      form_title: 'እንደ ሹፌር ይመዝገቡ 🛺',
+      form_sub: 'ከ2 ደቂቃ ያነሰ ጊዜ ይወስዳል። ስንጀምር እናገኝዎታለን።',
+      lbl_first_name: 'ስም', lbl_last_name: 'የአባት ስም', lbl_phone: 'ስልክ ቁጥር', aria_country_code: 'የአገር ኮድ',
+      lbl_city: 'ከተማ', placeholder_city: 'ከተማዎን ይምረጡ',
+      city_addis: 'አዲስ አበባ', city_bahirdar: 'ባሕር ዳር', city_gondar: 'ጎንደር', city_hawassa: 'ሐዋሳ', city_mekelle: 'መቐለ',
+      city_diredawa: 'ድሬዳዋ', city_jimma: 'ጅማ', city_adama: 'አዳማ (ናዝሬት)', city_other: 'ሌላ',
+      lbl_plate: 'የተሽከርካሪ ታርጋ', lbl_experience: 'ባጃጅ የነዱበት ዓመት', placeholder_select: 'ይምረጡ',
+      exp_lt1: 'ከ1 ዓመት በታች', exp_1_2: '1–2 ዓመት', exp_3_5: '3–5 ዓመት', exp_5p: 'ከ5 ዓመት በላይ',
+      lbl_ownership: 'ባጃጁ የራስዎ ነው?', own_yes: 'አዎ፣ ባጃጁ የራሴ ነው', own_no: 'አይደለም፣ ተከራይቼ ነው የምሠራው',
+      lbl_smartphone: 'ስማርትፎን አለዎት?', phone_android: 'አዎ፣ Android', phone_ios: 'አዎ፣ iPhone', phone_feature: 'የለኝም፣ ተራ ስልክ ነው',
+      btn_join: '🛺 የሹፌሮችን ዝርዝር ይቀላቀሉ — ነፃ', joining: 'በመመዝገብ ላይ...',
+      form_note: '🔒 መረጃዎ ሚስጥራዊ ነው። አላስፈላጊ መልዕክት አንልክም። የምናገኝዎ ስለ BajajGo መጀመር ብቻ ነው።',
+      err_required: 'እባክዎ ሁሉንም አስፈላጊ መረጃዎች ይሙሉ።',
+      err_phone: 'እባክዎ ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ።',
+      err_duplicate: 'ይህ ስልክ ቁጥር ቀድሞ በዝርዝሩ ውስጥ አለ።',
+      err_server: 'መረጃዎን ማስቀመጥ አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
+      err_network: 'የግንኙነት ችግር አጋጥሟል። ኢንተርኔትዎን አረጋግጠው እንደገና ይሞክሩ።',
+      success_title: 'ተመዝግበዋል!', success_pos: 'በዝርዝሩ #{n}',
+      success_thanks: 'የBajajGo ሹፌሮችን የጥበቃ ዝርዝር ስለተቀላቀሉ እናመሰግናለን።',
+      success_msg: 'በከተማዎ ስንጀምር በ<strong>{phone}</strong> መልዕክት እንልክልዎታለን።',
+      success_promo: 'የመጀመሪያዎቹ 500 ሹፌሮች ለ30 ቀናት ምንም ኮሚሽን አይከፍሉም።',
+      success_share: 'ለሌሎች የባጃጅ ሹፌሮች ያጋሩ፤ በዝርዝሩ ወደፊት ይሂዱ 📢',
+      footer_tagline: '— ለኢትዮጵያ የባለሦስት እግር ተሽከርካሪ መጥሪያ',
+      footer_rights: '© 2026 BajajGo · መብቱ በሕግ የተጠበቀ ነው', footer_built: 'ዲዛይንና ግንባታ፦',
+    },
+
+    or: {
+      meta_title: 'BajajGo — Oofi, Dabalataan Argadhu',
+      meta_desc: "Tarree eegumsaa konkolaachistoota BajajGo seeni. Imala dabalataa, galii dabalataa fi guyyoota 30 jalqabaaf komishinii malee — appii Bajaajaa Itoophiyaa isa jalqabaa.",
+      aria_lang: 'Afaan filadhu', nav_join: 'Tarree Seeni →',
+      counter_text: 'konkolaachistoonni tarree eegumsaa seenaniiru — warra jalqabaa keessaa ta\'i!',
+      hero_badge: '🇪🇹 Gara Itoophiyaa Dhufaa Jira',
+      hero_h1: 'Dabalataan Oofi.<br/><span>Dabalataan Argadhu.</span><br/>BajajGo Waliin.',
+      hero_p: 'Appiin Bajaajaa Itoophiyaa isa jalqabaa dhufaa jira.<br/>Kana booda imaltoota hin eegdu. Imalli gara kee dhufa.',
+      hero_cta: 'Tarree Konkolaachistootaa Seeni — Bilisaan',
+      stat_commission: "Komishinii ji'a jalqabaa", stat_week: 'Galii ETB torbanitti argamuu danda\'u', stat_schedule: 'Yeroo kee',
+      why_tag: 'Maaliif BajajGo', why_title: 'Konkolaachistoota Bajaajaatiif Kan Ijaarame', why_sub: 'Wanti hundi akkaataa ati itti hojjettu irratti hundaa\'ee qophaa\'e.',
+      b1_title: 'Guyyaatti Dabalataan Argadhu', b1_desc: 'Imalli gara kee dhufa — kana booda bakka dhaabbii irratti eeguun yookaan gatii irratti falmuun yeroon hin badu. Imala dabalataa = qarshii dabalataa.',
+      b2_title: 'Qajeelfama Karaa Of Keessaa Qabu', b2_desc: 'Qajeelfama tarkaanfii tarkaanfiin gara imaltuu fi bakka inni deemuutti. Burjaajiin hin jiru, karaa dogoggoraa hin jiru.',
+      b3_title: 'Maallaqni Callaa Yeroo Hunda Ni Fudhatama', b3_desc: 'Maallaqa callaa, Telebirr, CBE Birr — imaltoonni kee akka barbaadanitti kaffalu. Ati garuu battaluma kaffaltii kee argatta.',
+      b4_title: 'Maqaa Gaarii Ijaarradhu', b4_desc: 'Konkolaachistoonni madaallii olaanaa qaban imala dabalataa argatu. Madaalliin kee si hordofa — tajaajilli gaariin kallattiin buusii qaba.',
+      b5_title: 'Yeroo Keetiin Hojjedhu', b5_desc: 'Yeroo barbaadde toora irra seeni, yeroo boqonnaa barbaadde ba\'i. Abbaan hojii kee ofuma keeti.',
+      b6_title: 'Nageenyaa fi Deeggarsa', b6_desc: 'Qabduu SOS, inshuraansii imalaa fi deeggarsa konkolaachistootaa 24/7. Karaa irratti gonkumaa kophaa kee hin jirtu.',
+      how_tag: 'Akkamitti Hojjeta', how_title: 'Tarkaanfii Salphaa 4', how_sub: 'Daqiiqaa muraasa keessatti jalqabi. Guyyaa jalqabaa irraa kaasee argadhu.',
+      s1_title: "Galmaa'i", s1_desc: 'Bilbila, hayyama konkolaachisummaa fi lakkoofsa gabatee keetiin galmaa\'i',
+      s2_title: 'Mirkanaa\'i', s2_desc: "Sa'aatii 24 keessatti ni mirkanaa'a",
+      s3_title: 'Toora Irra Seeni', s3_desc: '"Toora irra" tuqiitii imala fudhachuu jalqabi',
+      s4_title: 'Argadhu', s4_desc: 'Imala hunda booda kaffaltii argadhu',
+      calc_tag: 'Herregaa Galii', calc_title: 'Hammam Argachuu Dandeessa?', calc_sub: 'Galii torbanii BajajGo irraa argattu tilmaami',
+      calc_trips: 'Imala guyyaatti', calc_fare: 'Gatii giddugaleessaa imala tokkoo', calc_days: 'Guyyoota torbanitti',
+      trips_n: 'imala {n}', days_n: 'guyyaa {n}', days_1: 'guyyaa {n}',
+      calc_weekly: 'Galii torbanii tilmaamame', calc_per_day: 'Guyyaatti', calc_per_month: "Ji'atti", calc_commission: "Komishinii (ji'a jalqabaa)",
+      early_tag: 'Seensa Duraa',
+      waitlist_title: 'Tarree Eegumsaa Konkolaachistootaa Seeni',
+      waitlist_sub: 'Konkolaachistoonni 500 jalqabaa <strong style="color:var(--primary)">guyyoota 30f komishinii hin kaffalan</strong>.',
+      form_title: "Akka Konkolaachisaatti Galmaa'i 🛺",
+      form_sub: 'Daqiiqaa 2 hin fudhatu. Yeroo jalqabnu si quunnamna.',
+      lbl_first_name: 'Maqaa', lbl_last_name: 'Maqaa Abbaa', lbl_phone: 'Lakkoofsa Bilbilaa', aria_country_code: 'Koodii biyyaa',
+      lbl_city: 'Magaalaa', placeholder_city: 'Magaalaa kee filadhu',
+      city_addis: 'Finfinnee (Addis Ababa)', city_bahirdar: 'Baahir Daar', city_gondar: 'Gondar', city_hawassa: 'Hawaasaa', city_mekelle: 'Maqalee',
+      city_diredawa: 'Dirree Dhawaa', city_jimma: 'Jimmaa', city_adama: 'Adaamaa (Naazreet)', city_other: 'Kan biraa',
+      lbl_plate: 'Lakkoofsa Gabatee', lbl_experience: 'Waggaa Bajaaja Oofte', placeholder_select: 'Filadhu',
+      exp_lt1: 'Waggaa 1 gadi', exp_1_2: 'Waggaa 1–2', exp_3_5: 'Waggaa 3–5', exp_5p: 'Waggaa 5 ol',
+      lbl_ownership: 'Bajaajni kee kan kee mitii?', own_yes: 'Eeyyee, Bajaajni kun kan kooti', own_no: 'Lakki, kireeffadheen hojjedha',
+      lbl_smartphone: 'Bilbila ismaartii qabdaa?', phone_android: 'Eeyyee, Android', phone_ios: 'Eeyyee, iPhone', phone_feature: 'Lakki, bilbila salphaa',
+      btn_join: '🛺 Tarree Konkolaachistootaa Seeni — Bilisaan', joining: "Galmaa'aa jira...",
+      form_note: '🔒 Odeeffannoon kee iccitiidhaan eegama. Ergaa hin barbaachisne hin erginu. Waa\'ee jalqabbii BajajGo qofaaf si quunnamna.',
+      err_required: 'Maaloo bakkeewwan barbaachisoo hunda guuti.',
+      err_phone: 'Maaloo lakkoofsa bilbilaa Itoophiyaa sirrii ta\'e galchi.',
+      err_duplicate: 'Lakkoofsi bilbilaa kun duraan tarree keessa jira.',
+      err_server: "Odeeffannoo kee kuusuun hin danda'amne. Maaloo irra deebi'ii yaali.",
+      err_network: "Rakkoon walqunnamtii jira. Maaloo interneetii kee mirkaneeffadhuu irra deebi'ii yaali.",
+      success_title: "Galmaa'teetta!", success_pos: 'Tarree keessatti #{n}',
+      success_thanks: 'Tarree eegumsaa konkolaachistoota BajajGo seenuu keetiif galatoomi.',
+      success_msg: 'Yeroo magaalaa kee keessatti jalqabnu <strong>{phone}</strong> irratti ergaa siif ergina.',
+      success_promo: 'Konkolaachistoonni 500 jalqabaa guyyoota 30f komishinii hin kaffalan.',
+      success_share: 'Konkolaachistoota Bajaajaa biroo waliin qoodiitii tarree keessatti fuulduratti tarkaanfadhu 📢',
+      footer_tagline: '— Konkolaataa Miila Sadii Waamuu Itoophiyaaf',
+      footer_rights: '© 2026 BajajGo · Mirgi hundi seeraan eegamaadha', footer_built: 'Qophii fi ijaarsa:',
+    },
+
+    ti: {
+      meta_title: 'BajajGo — ዘውር፣ ዝያዳ ኣእቱ',
+      meta_desc: 'ዝርዝር ተጸበይቲ ሹፌራት BajajGo ተጸንበር። ዝያዳ ጉዕዞ፣ ዝያዳ እቶትን ን30 ቀዳሞት መዓልታት ኮሚሽን የለን — ናይ ኢትዮጵያ ቀዳማይ መጸውዒ ባጃጅ ኣፕ።',
+      aria_lang: 'ቋንቋ ምረጽ', nav_join: 'ዝርዝር ተጸንበር →',
+      counter_text: 'ሹፌራት ዝርዝር ተጸበይቲ ተጸንቢሮም — ካብ ቀዳሞት ሓደ ኩን!',
+      hero_badge: '🇪🇹 ናብ ኢትዮጵያ ይመጽእ ኣሎ',
+      hero_h1: 'ዝያዳ ዘውር።<br/><span>ዝያዳ ኣእቱ።</span><br/>ምስ BajajGo።',
+      hero_p: 'ናይ ኢትዮጵያ ቀዳማይ ፍሉይ መጸውዒ ባጃጅ ኣፕ ይመጽእ ኣሎ።<br/>ካብ ሕጂ ተጓዓዝቲ ምጽባይ የለን። ጉዕዞታት ናባኻ ይመጹ።',
+      hero_cta: 'ዝርዝር ሹፌራት ተጸንበር — ብነጻ',
+      stat_commission: 'ኮሚሽን ኣብ ቀዳማይ ወርሒ', stat_week: 'ብር ኣብ ሰሙን ክትረክብ ትኽእል', stat_schedule: 'ናትካ ሰዓት',
+      why_tag: 'ስለምንታይ BajajGo', why_title: 'ንሹፌራት ባጃጅ ዝተሃንጸ', why_sub: 'ኩሉ ነገር ብመሰረት ኣሰራርሓኻ ዝተዳለወ እዩ።',
+      b1_title: 'ኣብ መዓልቲ ዝያዳ ኣእቱ', b1_desc: 'ጉዕዞታት ናባኻ ይመጹ — ካብ ሕጂ ኣብ መዕረፊ ብምጽባይ ወይ ዋጋ ብምድርዳር ግዜ ኣይባኽንን። ዝያዳ ጉዕዞ = ዝያዳ ብር።',
+      b2_title: 'ውሽጣዊ መምርሒ መገዲ', b2_desc: 'ስጉምቲ ብስጉምቲ ናብ ተጓዓዚን መዕለብን ዝመርሕ መምርሒ። ምድንጋር የለን፣ ጌጋ መገዲ የለን።',
+      b3_title: 'ጥረ ገንዘብ ኩሉ ግዜ ይቕበል', b3_desc: 'ጥረ ገንዘብ፣ Telebirr፣ CBE Birr — ተጓዓዝትኻ ብዝደለይዎ መንገዲ ይኸፍሉ። ንስኻ ግን ክፍሊትካ ብቕጽበት ትረክብ።',
+      b4_title: 'ጽቡቕ ስምካ ሃንጽ', b4_desc: 'ልዑል ደረጃ ዘለዎም ሹፌራት ዝያዳ ጉዕዞ ይረኽቡ። ደረጃኻ ምሳኻ ይኸይድ — ጽቡቕ ኣገልግሎት ብቐጥታ ይኸፍል።',
+      b5_title: 'ብናትካ ሰዓት ስራሕ', b5_desc: 'ምስ ደለኻ ኦንላይን ኣቱ፣ ዕረፍቲ ምስ ደለኻ ውጻእ። ሓላፊ ናይ ገዛእ ርእስኻ ንስኻ ኢኻ።',
+      b6_title: 'ድሕንነትን ደገፍን', b6_desc: 'መጠወቒ SOS፣ መድሕን ጉዕዞን 24/7 ደገፍ ሹፌራትን። ኣብ መገዲ ፈጺምካ በይንኻ ኣይኮንካን።',
+      how_tag: 'ከመይ ይሰርሕ', how_title: 'ብ4 ቀለልቲ ስጉምትታት', how_sub: 'ብደቓይቕ ጀምር። ካብ ቀዳመይቲ መዓልቲ ኣእቱ።',
+      s1_title: 'ተመዝገብ', s1_desc: 'ብስልክኻ፣ መንጃ ፍቓድካን ታርጋኻን ተመዝገብ',
+      s2_title: 'ተቐባልነት ርከብ', s2_desc: 'ኣብ ውሽጢ 24 ሰዓት ይረጋገጽ',
+      s3_title: 'ኦንላይን ኣቱ', s3_desc: '"ኦንላይን" ጠውቕ እሞ ጉዕዞታት ምቕባል ጀምር',
+      s4_title: 'ኣእቱ', s4_desc: 'ድሕሪ ነፍሲ ወከፍ ጉዕዞ ክፍሊትካ ርከብ',
+      calc_tag: 'መቑጸሪ እቶት', calc_title: 'ክንደይ ክትረክብ ትኽእል?', calc_sub: 'ኣብ BajajGo ሰሙናዊ እቶትካ ገምት',
+      calc_trips: 'ጉዕዞታት ኣብ መዓልቲ', calc_fare: 'ማእከላይ ዋጋ ኣብ ጉዕዞ', calc_days: 'መዓልታት ኣብ ሰሙን',
+      trips_n: '{n} ጉዕዞታት', days_n: '{n} መዓልታት', days_1: '{n} መዓልቲ',
+      calc_weekly: 'ግምታዊ ሰሙናዊ እቶት', calc_per_day: 'ኣብ መዓልቲ', calc_per_month: 'ኣብ ወርሒ', calc_commission: 'ኮሚሽን (ቀዳማይ ወርሒ)',
+      early_tag: 'ቅድመ-ምእታው',
+      waitlist_title: 'ዝርዝር ተጸበይቲ ሹፌራት ተጸንበር',
+      waitlist_sub: 'ቀዳሞት 500 ሹፌራት <strong style="color:var(--primary)">ን30 መዓልታት ኮሚሽን ኣይከፍሉን</strong>።',
+      form_title: 'ከም ሹፌር ተመዝገብ 🛺',
+      form_sub: 'ካብ 2 ደቒቕ ንታሕቲ ይወስድ። ምስ ጀመርና ክንረኽበካ ኢና።',
+      lbl_first_name: 'ስም', lbl_last_name: 'ስም ኣቦ', lbl_phone: 'ቁጽሪ ስልኪ', aria_country_code: 'ኮድ ሃገር',
+      lbl_city: 'ከተማ', placeholder_city: 'ከተማኻ ምረጽ',
+      city_addis: 'ኣዲስ ኣበባ', city_bahirdar: 'ባሕሪ ዳር', city_gondar: 'ጎንደር', city_hawassa: 'ሃዋሳ', city_mekelle: 'መቐለ',
+      city_diredawa: 'ድሬዳዋ', city_jimma: 'ጅማ', city_adama: 'ኣዳማ (ናዝሬት)', city_other: 'ካልእ',
+      lbl_plate: 'ታርጋ ተሽከርካሪ', lbl_experience: 'ባጃጅ ዝዘወርካሉ ዓመታት', placeholder_select: 'ምረጽ',
+      exp_lt1: 'ካብ 1 ዓመት ንታሕቲ', exp_1_2: '1–2 ዓመት', exp_3_5: '3–5 ዓመት', exp_5p: 'ልዕሊ 5 ዓመት',
+      lbl_ownership: 'ባጃጅ ናትካ ድዩ?', own_yes: 'እወ፣ ባጃጅ ናተይ እዩ', own_no: 'ኣይኮነን፣ ተኻርየ እየ ዝሰርሕ',
+      lbl_smartphone: 'ስማርትፎን ኣለካ ድዩ?', phone_android: 'እወ፣ Android', phone_ios: 'እወ፣ iPhone', phone_feature: 'የብለይን፣ ቀሊል ስልኪ እዩ',
+      btn_join: '🛺 ዝርዝር ሹፌራት ተጸንበር — ብነጻ', joining: 'ይምዝገብ ኣሎ...',
+      form_note: '🔒 ሓበሬታኻ ብምስጢር ይሕሎ። ዘየድሊ መልእኽቲ ኣይንሰድድን። ብዛዕባ ምጅማር BajajGo ጥራይ ክንረኽበካ ኢና።',
+      err_required: 'በጃኻ ኩሎም ኣድለይቲ ቦታታት መልእ።',
+      err_phone: 'በጃኻ ቅኑዕ ቁጽሪ ስልኪ ኢትዮጵያ ኣእቱ።',
+      err_duplicate: 'እዚ ቁጽሪ ስልኪ ቅድሚ ሕጂ ኣብ ዝርዝር ኣሎ።',
+      err_server: 'ሓበሬታኻ ክዕቀብ ኣይከኣለን። በጃኻ እንደገና ፈትን።',
+      err_network: 'ጸገም ርክብ ኣጋጢሙ። በጃኻ ኢንተርነትካ ኣረጋጊጽካ እንደገና ፈትን።',
+      success_title: 'ተመዝጊብካ ኣለኻ!', success_pos: 'ኣብ ዝርዝር #{n}',
+      success_thanks: 'ዝርዝር ተጸበይቲ ሹፌራት BajajGo ስለ ዝተጸንበርካ የቐንየልና።',
+      success_msg: 'ኣብ ከተማኻ ምስ ጀመርና ብ<strong>{phone}</strong> መልእኽቲ ክንሰደልካ ኢና።',
+      success_promo: 'ቀዳሞት 500 ሹፌራት ን30 መዓልታት ኮሚሽን ኣይከፍሉን።',
+      success_share: 'ምስ ካልኦት ሹፌራት ባጃጅ ኣካፍል፣ ኣብ ዝርዝር ንቕድሚት ሕለፍ 📢',
+      footer_tagline: '— ንኢትዮጵያ ናይ ሰለስተ መንኮርኮር ተሽከርካሪ መጸውዒ',
+      footer_rights: '© 2026 BajajGo · ኩሉ መሰል ዝተሓለወ እዩ', footer_built: 'ዲዛይንን ህንጸትን፦',
+    },
+
+    si: {
+      meta_title: 'BajajGo — Konkolaachi, Roore Afiʼri',
+      meta_desc: 'BajajGo shufeerubbate agarte borro eʼi. Roore hadhooma, roore afiʼa, umi 30 barraho komishine dino — Itiyoophiyu umi Bajaaje xawisiisa appe.',
+      aria_lang: 'Afoo doori', nav_join: 'Borro Eʼi →',
+      counter_text: 'shufeerubba agarte borro eʼino — umi ikkitannorira mitto ikki!',
+      hero_badge: '🇪🇹 Itiyoophiya dayanni no',
+      hero_h1: 'Roore Konkolaachi.<br/><span>Roore Afiʼri.</span><br/>BajajGonni.',
+      hero_p: 'Itiyoophiyu umi Bajaaje xawisiisa appe dayanni no.<br/>Hadhaanchubba agarinni dino. Hadhoomi ninkewa dayanno.',
+      hero_cta: 'Shufeerubbate Borro Eʼi — Mereersa',
+      stat_commission: 'Umi aganira komishine', stat_week: 'ETB lamallate afiʼa dandaʼamanno', stat_schedule: 'Yannakki',
+      why_tag: 'Mayira BajajGo', why_title: 'Bajaaju Shufeerubbaho Ijaarantino', why_sub: 'Baalanta coye ate loosatto garinni qixxaawino.',
+      b1_title: 'Barrira Roore Afiʼri', b1_desc: 'Hadhoomi ninkewa dayanno — uurrinshu bayira agarinni woy waagaho hasaawinni yanna hoogattokki. Roore hadhooma = roore birre.',
+      b2_title: 'Giddo Noo Doogo Kulaancho', b2_desc: 'Hadhaanchonna hadhatto bayira geeshsha qaafo qaafonni kulanno doogo. Burjaajje dino, gaafo doogo dino.',
+      b3_title: 'Kaashi Duuchu Yanna Adhinanno', b3_desc: 'Kaashi, Telebirr, CBE Birr — hadhaanchubbakki hasiʼrannoha garinni baatolanno. Ate baatolakki xaʼunni afiʼratto.',
+      b4_title: 'Danchu Sunkakki Ijaari', b4_desc: 'Lowo qorrisa afiʼrino shufeerubba roore hadhooma afiʼrranno. Qorrisakki ninkerra hadhanno — danchu assishshi qoosso abbanno.',
+      b5_title: 'Yannakkinni Loosi', b5_desc: 'Hasiʼratto yanna online eʼi, foolishsha hasiʼratto yanna fuli. Ate umikkira halaqa.',
+      b6_title: 'Fayyimmanna Kaaʼlo', b6_desc: 'SOS ilka, hadhoomu inshuraansenna 24/7 shufeerubbate kaaʼlo. Doogo aana mitte calla dihattoti.',
+      how_tag: 'Hiittoonni Loossanno', how_title: '4 Shota Qaafo', how_sub: 'Daqiiqanni jammi. Umi barraneenni afiʼri.',
+      s1_title: 'Galmaaʼi', s1_desc: 'Silkekkinni, konkolaachiʼa fajjokkinni nna taargakkinni galmaaʼi',
+      s2_title: 'Adhinanni', s2_desc: '24 saate giddo buuxamanno',
+      s3_title: 'Online Eʼi', s3_desc: '"Online" qixxi nna hadhooma adhate jammi',
+      s4_title: 'Afiʼri', s4_desc: 'Mittu mittunku hadhoominni gedensaanni baatolakki afiʼri',
+      calc_tag: 'Afiʼa Shallaggo', calc_title: 'Mixxo Afiʼra Dandaʼatto?', calc_sub: 'BajajGo aana lamallate afiʼakki qori',
+      calc_trips: 'Barrira hadhooma', calc_fare: 'Mittu hadhoomira mereeru waaga', calc_days: 'Lamallara barra',
+      trips_n: '{n} hadhooma', days_n: '{n} barra', days_1: '{n} barra',
+      calc_weekly: 'Lamallate afiʼa qorantino', calc_per_day: 'Barrira', calc_per_month: 'Aganira', calc_commission: 'Komishine (umi agana)',
+      early_tag: 'Albaanni Eʼa',
+      waitlist_title: 'Shufeerubbate Agarte Borro Eʼi',
+      waitlist_sub: 'Umi 500 shufeerubba <strong style="color:var(--primary)">30 barraho komishine baatolannokki</strong>.',
+      form_title: 'Shufeere Ikkatenni Galmaaʼi 🛺',
+      form_sub: '2 daqiiqa roorannokki. Jammineemmo yanna xaadisiisinoommo.',
+      lbl_first_name: 'Suʼma', lbl_last_name: 'Annu Suʼma', lbl_phone: 'Silku Kiiro', aria_country_code: 'Gobbu koode',
+      lbl_city: 'Katama', placeholder_city: 'Katamakki doori',
+      city_addis: 'Addis Ababa', city_bahirdar: 'Bahir Dar', city_gondar: 'Gondar', city_hawassa: 'Hawaasa', city_mekelle: 'Mekele',
+      city_diredawa: 'Dire Dawa', city_jimma: 'Jimma', city_adama: 'Adama (Nazret)', city_other: 'Wole',
+      lbl_plate: 'Konkolaatu Taarga', lbl_experience: 'Bajaaje Konkolaachiʼe Diro', placeholder_select: 'Doori',
+      exp_lt1: '1 diro hunda shiima', exp_1_2: '1–2 diro', exp_3_5: '3–5 diro', exp_5p: '5 diro aleenni',
+      lbl_ownership: 'Bajaaje kee uminkekkiʼeeti?', own_yes: 'Ee, Bajaaje anikkiʼeeti', own_no: 'Deeʼni, kiraanni loosiʼanno',
+      lbl_smartphone: 'Smartphone noohe?', phone_android: 'Ee, Android', phone_ios: 'Ee, iPhone', phone_feature: 'Deeʼni, shota silke',
+      btn_join: '🛺 Shufeerubbate Borro Eʼi — Mereersa', joining: 'Galmaaʼanni no...',
+      form_note: '🔒 Odeekki maaxxamanno. Hasiʼrannokki sokka soʼinummokki. BajajGo jammanno yanna calla xaadisiisinoommo.',
+      err_required: 'Ikkiro baala hasiʼrannoha bayira wonshi.',
+      err_phone: 'Ikkiro halaale Itiyoophiyu silku kiiro eʼisi.',
+      err_duplicate: 'Kuni silku kiiro albaanni borro giddo no.',
+      err_server: 'Odeekki agarate dandaʼamino dino. Ikkiro galagaltenni wodani.',
+      err_network: 'Xaadooshshu qarri no. Ikkiro internetekki buuxxe galagaltenni wodani.',
+      success_title: 'Galmaaʼlitto!', success_pos: 'Borro giddo #{n}',
+      success_thanks: 'BajajGo shufeerubbate agarte borro eʼitto daafira galatoommo.',
+      success_msg: 'Katamakki giddo jammineemmo yanna <strong>{phone}</strong> aana sokka soʼinoommo.',
+      success_promo: 'Umi 500 shufeerubba 30 barraho komishine baatolannokki.',
+      success_share: 'Wole Bajaaju shufeerubbara qooli, borro giddo albira sai 📢',
+      footer_tagline: '— Itiyoophiyaho Sase Lekkate Konkolaata Xawisiisa',
+      footer_rights: '© 2026 BajajGo · Baala qoossi agarantino', footer_built: 'Dizaayinenna ijaarsa:',
+    },
+  };
+
+  // ── i18n engine (same logic as index.html; both pages share localStorage key 'bjg_lang') ──
+  const LANGS = ['en', 'am', 'or', 'ti', 'si'];
+  const LANG_LABELS = { en: 'English', am: 'አማርኛ', or: 'Oromoo', ti: 'ትግርኛ', si: 'Sidaamu Afoo' };
+  // Proper BCP-47 tags for <html lang>. (Stored codes 'or'/'si' are kept for backwards
+  // compatibility with existing localStorage values; as ISO codes they would mean Odia/Sinhala.)
+  const HTML_LANG = { en: 'en', am: 'am', or: 'om', ti: 'ti', si: 'sid' };
+  const LANG_KEY = 'bjg_lang';
+
+  function readSavedLang() {
+    try { const l = localStorage.getItem(LANG_KEY); return LANGS.indexOf(l) >= 0 ? l : 'en'; }
+    catch (e) { return 'en'; }
+  }
+  let currentLang = readSavedLang();
+
+  function t(key, vars) {
+    const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    let s = dict[key] != null ? dict[key] : TRANSLATIONS.en[key];
+    if (s == null) return key;
+    if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (vars[k] != null ? vars[k] : m));
+    return s;
+  }
+  function escapeHtml(v) {
+    return String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function elVars(el, forHtml) {
+    if (!el.dataset.i18nVars) return null;
+    try {
+      const v = JSON.parse(el.dataset.i18nVars);
+      if (forHtml) Object.keys(v).forEach(k => { v[k] = escapeHtml(v[k]); });
+      return v;
+    } catch (e) { return null; }
+  }
+  function setI18n(el, key, vars) {          // tag an element with a key (+vars) and render it now
+    el.setAttribute('data-i18n', key);
+    if (vars) el.setAttribute('data-i18n-vars', JSON.stringify(vars)); else el.removeAttribute('data-i18n-vars');
+    el.textContent = t(key, vars);
+  }
+
+  function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n, elVars(el)); });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml, elVars(el, true)); });
+    [['data-i18n-placeholder', 'placeholder'], ['data-i18n-aria', 'aria-label'], ['data-i18n-alt', 'alt'], ['data-i18n-title', 'title']]
+      .forEach(([attr, target]) => {
+        document.querySelectorAll('[' + attr + ']').forEach(el => { el.setAttribute(target, t(el.getAttribute(attr))); });
+      });
+    document.title = t('meta_title');
+    const md = document.getElementById('metaDesc');
+    if (md) md.setAttribute('content', t('meta_desc'));
+    document.documentElement.lang = HTML_LANG[currentLang] || 'en';
+  }
+
+  const langBtn = document.getElementById('langBtn');
+  const langDropdown = document.getElementById('langDropdown');
+  const langSwitcher = document.getElementById('langSwitcher');
+
+  function syncLangUI() {
+    document.getElementById('langBtnLabel').textContent = LANG_LABELS[currentLang];
+    document.querySelectorAll('[data-lang]').forEach(el => {
+      const on = el.dataset.lang === currentLang;
+      el.classList.toggle('active', on);
+      if (el.getAttribute('role') === 'menuitemradio') el.setAttribute('aria-checked', on ? 'true' : 'false');
+      else el.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  function openLangMenu()  { langBtn.classList.add('open');    langDropdown.classList.add('open');    langBtn.setAttribute('aria-expanded', 'true'); }
+  function closeLangMenu() { langBtn.classList.remove('open'); langDropdown.classList.remove('open'); langBtn.setAttribute('aria-expanded', 'false'); }
+  function toggleLang() { langDropdown.classList.contains('open') ? closeLangMenu() : openLangMenu(); }
+
+  function setLang(lang) {
+    if (LANGS.indexOf(lang) < 0) lang = 'en';
+    currentLang = lang;
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+    applyTranslations();
+    syncLangUI();
+    calcEarnings();
+    closeLangMenu();
+  }
+
+  langBtn.addEventListener('click', e => { e.stopPropagation(); toggleLang(); });
+  // Dropdown options and footer pills (real <button>s, so taps register on iOS/Android too)
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.addEventListener('click', e => { e.stopPropagation(); setLang(el.dataset.lang); });
+  });
+  document.addEventListener('click', e => { if (!langSwitcher.contains(e.target)) closeLangMenu(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLangMenu(); });
+  // Keep in sync with a language chosen on another page/tab (incl. back/forward cache restores)
+  window.addEventListener('storage', e => { if (e.key === LANG_KEY) { const l = readSavedLang(); if (l !== currentLang) setLang(l); } });
+  window.addEventListener('pageshow', () => { const l = readSavedLang(); if (l !== currentLang) setLang(l); });
+
   // ── Earnings Calculator ──
   function calcEarnings() {
     const trips = parseInt(document.getElementById('trips-slider').value);
     const fare  = parseInt(document.getElementById('fare-slider').value);
     const days  = parseInt(document.getElementById('days-slider').value);
 
-    document.getElementById('trips-val').textContent = trips + ' trips';
-    document.getElementById('fare-val').textContent  = 'ETB ' + fare;
-    document.getElementById('days-val').textContent  = days + ' day' + (days > 1 ? 's' : '');
+    setI18n(document.getElementById('trips-val'), 'trips_n', { n: trips });
+    document.getElementById('fare-val').textContent = 'ETB ' + fare;
+    setI18n(document.getElementById('days-val'), days === 1 ? 'days_1' : 'days_n', { n: days });
 
     const daily   = trips * fare;
     const weekly  = daily * days;
     const monthly = Math.round(weekly * 4.3);
 
-    document.getElementById('daily-earn').textContent   = 'ETB ' + daily.toLocaleString();
-    document.getElementById('weekly-earn').textContent  = 'ETB ' + weekly.toLocaleString();
-    document.getElementById('monthly-earn').textContent = 'ETB ' + monthly.toLocaleString();
+    document.getElementById('daily-earn').textContent   = 'ETB ' + daily.toLocaleString('en-US');
+    document.getElementById('weekly-earn').textContent  = 'ETB ' + weekly.toLocaleString('en-US');
+    document.getElementById('monthly-earn').textContent = 'ETB ' + monthly.toLocaleString('en-US');
     document.getElementById('commission-val').textContent = 'ETB 0';
   }
+  ['trips-slider', 'fare-slider', 'days-slider'].forEach(id => document.getElementById(id).addEventListener('input', calcEarnings));
+
+  // Apply the saved language immediately (this script runs at the end of <body>, before first paint)
+  applyTranslations();
+  syncLangUI();
   calcEarnings();
+  document.documentElement.classList.remove('i18n-pending');
 
   // ── Counter ──
   async function loadCounter() {
@@ -799,11 +1205,20 @@
   loadCounter();
 
   // ── Form Submit ──
+  // Map API errors (English text from server.js) to translated messages.
+  function errorKeyFor(status, message) {
+    const m = (message || '').toLowerCase();
+    if (status === 409 || m.indexOf('already') >= 0) return 'err_duplicate';
+    if (m.indexOf('phone') >= 0) return 'err_phone';
+    if (status === 400) return 'err_required';
+    return 'err_server';
+  }
+
   document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('submit-btn');
     const errEl = document.getElementById('form-error');
-    btn.textContent = (window.BJG_LANG && window.BJG_LANG.joining) || 'Joining...';
+    setI18n(btn, 'joining');
     btn.disabled = true;
     errEl.style.display = 'none';
 
@@ -819,27 +1234,33 @@
       smartphone: form.smartphone.value,
     };
 
+    let res, result;
     try {
-      const res = await fetch('/api/waitlist/join', {
+      res = await fetch('/api/waitlist/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      const result = await res.json();
+      result = await res.json().catch(() => ({}));
+    } catch (err) {
+      res = null;
+    }
 
-      if (!res.ok) throw new Error(result.error || 'Something went wrong');
-
-      document.getElementById('success-position').textContent = '#' + result.position + ' on the list';
-      document.getElementById('success-phone').textContent = data.phone;
+    if (res && res.ok) {
+      setI18n(document.getElementById('success-position'), 'success_pos', { n: result.position });
+      const msg = document.getElementById('success-msg');
+      msg.setAttribute('data-i18n-vars', JSON.stringify({ phone: data.phone }));
+      msg.innerHTML = t('success_msg', { phone: escapeHtml(data.phone) });
       document.getElementById('form-section').style.display = 'none';
       document.getElementById('success-section').style.display = 'block';
       animateCounter(result.totalCount);
-    } catch (err) {
-      errEl.textContent = err.message;
-      errEl.style.display = 'block';
-      btn.textContent = (window.BJG_LANG && window.BJG_LANG.btn_join) || '🛺 Join Driver Waitlist — Free';
-      btn.disabled = false;
+      return;
     }
+
+    setI18n(errEl, res ? errorKeyFor(res.status, result && result.error) : 'err_network');
+    errEl.style.display = 'block';
+    setI18n(btn, 'btn_join');
+    btn.disabled = false;
   });
 
   // ── Scroll fade-in ──
@@ -847,130 +1268,6 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-  // ── Language switcher ──────────────────────────────────────────
-  window.BJG_LANG = null;
-  const TRANSLATIONS = {
-    en: {
-      nav_join: 'Join Waitlist →',
-      waitlist_title: 'Join the Driver Waitlist',
-      waitlist_sub: 'First 500 drivers get <strong style="color:var(--primary)">zero commission for 30 days</strong>.',
-      form_title: 'Sign Up as a Driver 🛺',
-      form_sub: "Takes less than 2 minutes. We'll contact you when we launch.",
-      btn_join: '🛺 Join Driver Waitlist — Free',
-      lbl_first_name: 'First Name', lbl_last_name: 'Last Name',
-      lbl_phone: 'Phone Number', lbl_city: 'City',
-      lbl_plate: 'Vehicle Plate', lbl_experience: 'Years Driving Bajaj',
-      lbl_ownership: 'Do you own your Bajaj?', lbl_smartphone: 'Do you have a smartphone?',
-      own_yes: 'Yes, I own my Bajaj', own_no: 'No, I rent / lease it',
-      phone_android: 'Yes, Android', phone_ios: 'Yes, iPhone', phone_feature: 'No, feature phone',
-      placeholder_city: 'Select your city', placeholder_select: 'Select',
-      form_note: "🔒 Your info is private. No spam. We'll only contact you about BajajGo launch.",
-      joining: 'Joining...',
-    },
-    am: {
-      nav_join: 'ዝርዝር ይቀላቀሉ →',
-      waitlist_title: 'የሹፌር ዝርዝር ይቀላቀሉ',
-      waitlist_sub: 'የመጀመሪያዎቹ 500 ሹፌሮች ለ<strong style="color:var(--primary)">30 ቀናት ምንም ኮሚሽን</strong> አይከፍሉም።',
-      form_title: 'እንደ ሹፌር ይመዝገቡ 🛺',
-      form_sub: 'ከ2 ደቂቃ ያነሰ ጊዜ ይወስዳል። ስናስጀምር እናሳውቅዎታለን።',
-      btn_join: '🛺 ለሹፌር ዝርዝር ይቀላቀሉ — ነፃ',
-      lbl_first_name: 'የመጀመሪያ ስም', lbl_last_name: 'የአያት ስም',
-      lbl_phone: 'ስልክ ቁጥር', lbl_city: 'ከተማ',
-      lbl_plate: 'የተሽከርካሪ ሰሌዳ', lbl_experience: 'ባጃጅ ያሽከረከሩ ዓመታት',
-      lbl_ownership: 'ባጃጅዎ የርስዎ ነው?', lbl_smartphone: 'ስማርትፎን አልዎት?',
-      own_yes: 'አዎ፣ ባጃጅዬ የርሴ ነው', own_no: 'አይደለም፣ ተከራይቻለሁ',
-      phone_android: 'አዎ፣ አንድሮይድ', phone_ios: 'አዎ፣ አይፎን', phone_feature: 'አይደለም፣ ቀላል ፎን',
-      placeholder_city: 'ከተማዎን ይምረጡ', placeholder_select: 'ይምረጡ',
-      form_note: '🔒 መረጃዎ ግላዊ ነው። ስናስጀምር ብቻ እናሳውቅዎታለን።',
-      joining: 'እየቀላቀሉ...',
-    },
-    or: {
-      nav_join: 'Tarree Seeni →',
-      waitlist_title: 'Tarree Konkolaachitootaa Seeni',
-      waitlist_sub: 'Konkolaachitoonni 500 jalqabaa guyyoota <strong style="color:var(--primary)">30f komishinii hin kafalan</strong>.',
-      form_title: 'Akka Konkolaachitaatti Galmaaʼi 🛺',
-      form_sub: 'Daqiiqaa 2 gadi fudhata. Yeroo jalqabnu si beeksifna.',
-      btn_join: '🛺 Tarree Konkolaachitootaa Seeni — Bilisaan',
-      lbl_first_name: 'Maqaa Jalqabaa', lbl_last_name: 'Maqaa Maatii',
-      lbl_phone: 'Lakkoofsa Bilbilaa', lbl_city: 'Magaalaa',
-      lbl_plate: 'Pleetii Konkolaataa', lbl_experience: 'Waggaa Bajaj Ooftan',
-      lbl_ownership: 'Bajajni Keessan Keessanidha?', lbl_smartphone: 'Bilbila Ogummaa Qabdaa?',
-      own_yes: 'Eeyyee, Bajaj koo koo dha', own_no: 'Lakki, kireeffadheera',
-      phone_android: 'Eeyyee, Android', phone_ios: 'Eeyyee, iPhone', phone_feature: 'Lakki, bilbila salphaa',
-      placeholder_city: 'Magaalaa kee filadhu', placeholder_select: 'Filadhu',
-      form_note: '🔒 Odeeffannoon kee dhuunfaa dha. Yeroo jalqabnu qofa si beeksifna.',
-      joining: 'Seenaa jira...',
-    },
-    ti: {
-      nav_join: 'ዝርዝር ተሳተፍ →',
-      waitlist_title: 'ዝርዝር ሹፌራት ተሳተፍ',
-      waitlist_sub: 'ናይ መጀመርታ 500 ሹፌራት ን<strong style="color:var(--primary)">30 መዓልታት ኮሚሽን ኣይከፍሉን</strong>።',
-      form_title: 'ከም ሹፌር ምዝገባ 🛺',
-      form_sub: 'ካብ 2 ደቒቓ ኣይሓልፍን። ክንጅምር እንከሎና ክንሕብረካ ኢና።',
-      btn_join: '🛺 ዝርዝር ሹፌራት ተሳተፍ — ብነጻ',
-      lbl_first_name: 'ቀዳማይ ስም', lbl_last_name: 'ናይ ስድራ ስም',
-      lbl_phone: 'ቁጽሪ ስልኪ', lbl_city: 'ከተማ',
-      lbl_plate: 'ናይ መኪና ፕሌት', lbl_experience: 'ዓመታት ባጃጅ ምዝዋር',
-      lbl_ownership: 'ባጃጅ ናትካ ድዩ?', lbl_smartphone: 'ስማርትፎን ኣለካ?',
-      own_yes: 'እወ፣ ባጃጅ ናተይ እዩ', own_no: 'ኣይኮነን፣ ካብ ካሊእ ሊዝ ወሲደዮ',
-      phone_android: 'እወ፣ ኣንድሮይድ', phone_ios: 'እወ፣ ኣይፎን', phone_feature: 'ኣይኮነን፣ ቀሊል ፎን',
-      placeholder_city: 'ከተማኻ ምረጽ', placeholder_select: 'ምረጽ',
-      form_note: '🔒 ሓበሬታኻ ብሕትዊ እዩ። ክንጅምር እንከሎና ጥራሕ ክንሕብረካ ኢና።',
-      joining: 'ይምዝገብ ኣሎ...',
-    },
-    si: {
-      nav_join: 'Xiinxalte Seenso →',
-      waitlist_title: 'Xaphooshshannote Xiinxalte Seenso',
-      waitlist_sub: 'Xaphooshshannori 500 jalatteenni barra <strong style="color:var(--primary)">30nni komishinni hagiirrittooti</strong>.',
-      form_title: 'Xaphooshsho Giddo Galmaaʼi 🛺',
-      form_sub: 'Daqiiqaa 2 aana wori. Jalqabbinoonke uulla ninna huwatinoommo.',
-      btn_join: '🛺 Xaphooshshannote Xiinxalte Seenso — Shaqqadaakki',
-      lbl_first_name: 'Maga Jalqabaa', lbl_last_name: 'Maga Dooggaa',
-      lbl_phone: 'Mobilete Lakkoofsa', lbl_city: 'Katama',
-      lbl_plate: 'Konkolaatete Pleetii', lbl_experience: 'Bajaj Ooftete Diro',
-      lbl_ownership: 'Bajajuwa Ittete?', lbl_smartphone: 'Mobilete Ogummaawa Qineessittohe?',
-      own_yes: 'Ee, bajajuma keenya', own_no: 'Chii, kireeffadhe',
-      phone_android: 'Ee, Android', phone_ios: 'Ee, iPhone', phone_feature: 'Chii, mobilete salphaa',
-      placeholder_city: 'Katamakki filadhu', placeholder_select: 'Filadhu',
-      form_note: '🔒 Odeeffannoowa dhuunfaa. Jalqabbinoonke uulla huwatinoommo.',
-      joining: 'Seenna jiroommo...',
-    },
-  };
-
-  const LANG_LABELS = { en: 'English', am: 'አማርኛ', or: 'Oromoo', ti: 'ትግርኛ', si: 'Sidama' };
-  window.BJG_LANG = TRANSLATIONS.en;
-
-  function toggleLang() {
-    document.getElementById('langBtn').classList.toggle('open');
-    document.getElementById('langDropdown').classList.toggle('open');
-  }
-
-  function setLang(lang) {
-    window.BJG_LANG = TRANSLATIONS[lang] || TRANSLATIONS.en;
-    document.getElementById('langBtnLabel').textContent = LANG_LABELS[lang];
-    document.querySelectorAll('.lang-option').forEach(el =>
-      el.classList.toggle('active', el.dataset.lang === lang)
-    );
-    const L = window.BJG_LANG;
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.dataset.i18n;
-      if (L[key] !== undefined) el.innerHTML = L[key];
-    });
-    localStorage.setItem('bjg_lang', lang);
-    document.getElementById('langBtn').classList.remove('open');
-    document.getElementById('langDropdown').classList.remove('open');
-  }
-
-  document.addEventListener('click', e => {
-    if (!document.getElementById('langSwitcher').contains(e.target)) {
-      document.getElementById('langBtn').classList.remove('open');
-      document.getElementById('langDropdown').classList.remove('open');
-    }
-  });
-
-  const saved = localStorage.getItem('bjg_lang');
-  if (saved && saved !== 'en') setLang(saved);
 </script>
 
 </body>
